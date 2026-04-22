@@ -282,7 +282,7 @@ function TrustSection() {
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
               {['✅ कोई डेटा सेव नहीं', '✅ कोई लॉगिन नहीं', '✅ Free Forever', '✅ Open Source', '✅ No Ads'].map((b) => (
-                <span key={b} className="px-3 py-1 rounded-full bg-white/8 border border-white/10 text-xs text-slate-400 font-medium devanagari">
+                <span key={b} className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs text-slate-400 font-medium devanagari">
                   {b}
                 </span>
               ))}

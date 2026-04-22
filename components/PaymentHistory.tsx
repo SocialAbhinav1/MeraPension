@@ -115,7 +115,7 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60">
+          <tbody className="divide-y divide-slate-100">
             {records.map((r, i) => (
               <tr
                 key={i}
@@ -184,7 +184,7 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
 }
 
 // ─── Empty state ─────────────────────────────────────────────────────────────
-function EmptyHistory({ rawText }: { rawText: string }) {
+function EmptyHistory({ rawText }: { rawText?: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-3">
       <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
@@ -230,7 +230,7 @@ export default function PaymentHistory({ data, financialYear }: Props) {
       {hasHistory ? (
         <HistoryTable records={data.paymentHistory} />
       ) : (
-        !hasMonths && <EmptyHistory rawText={data.paymentStatusRaw} />
+        !hasMonths && <EmptyHistory rawText={data.paymentStatusRaw ?? ''} />
       )}
 
       {/* If we have summary but no history table, show a note */}
@@ -238,7 +238,7 @@ export default function PaymentHistory({ data, financialYear }: Props) {
         <div className="px-6 py-4 border-t border-slate-200">
           <p className="text-xs text-slate-500 devanagari leading-relaxed">
             <span className="text-slate-500 font-medium">पोर्टल से मूल जानकारी: </span>
-            {data.paymentStatusRaw}
+            {data.paymentStatusRaw ?? ''}
           </p>
         </div>
       )}
