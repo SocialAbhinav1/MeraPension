@@ -364,23 +364,31 @@ export default function HomePage() {
   const [pensionData, setPensionData] = useState<PensionData | null>(null);
   const [lastSearch, setLastSearch] = useState<SearchFormValues | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  // AbortController ref — cancels any in-flight request when a new search starts
+  const abortRef = useRef<AbortController | null>(null);
 
   const scrollToResults = () => {
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
   };
 
   const handleSearch = useCallback(async (values: SearchFormValues) => {
+    // Cancel any previous in-flight request before starting a new one
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+    const { signal } = abortRef.current;
+
     setLastSearch(values);
     setAppState('loading');
     setPensionData(null);
     scrollToResults();
 
     try {
-      // 1. Fetch pension/payment data
+      // Single server request — seeding is merged server-side, nothing exposed in DevTools
       const res = await fetch('/api/pension-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
+        signal,
       });
       const json = await res.json();
 
@@ -390,31 +398,12 @@ export default function HomePage() {
         return;
       }
 
-      const data: PensionData = json.data;
-
-      // 2. Fetch Aadhaar seeding data in parallel (non-fatal)
-      try {
-        const seedRes = await fetch('/api/aadhaar-seeding', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ searchType: values.searchType, searchValue: values.searchValue }),
-        });
-        const seedJson = await seedRes.json();
-        if (seedJson.success && seedJson.data) {
-          data.aadhaarSeedingStatus = seedJson.data.status;
-          data.aadhaarSeedingBadge = seedJson.data.statusBadge;
-          if (seedJson.data.aadhaarNo) data.aadhaarNo = seedJson.data.aadhaarNo;
-        }
-      } catch {
-        // Seeding data is non-fatal
-        data.aadhaarSeedingStatus = 'Could not fetch';
-        data.aadhaarSeedingBadge = 'neutral';
-      }
-
-      setPensionData(data);
+      setPensionData(json.data as PensionData);
       setAppState('results');
       scrollToResults();
-    } catch {
+    } catch (e) {
+      // AbortError = user started a new search — silently ignore
+      if (e instanceof DOMException && e.name === 'AbortError') return;
       setErrorMsg('Failed to connect to the eLabharthi portal. Please check your connection and try again.');
       setAppState('error');
     }

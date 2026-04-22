@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Hide X-Powered-By: Next.js header — prevents tech stack fingerprinting
+  poweredByHeader: false,
+
   // cheerio uses Node.js APIs — keep on nodejs runtime, not Edge
   serverExternalPackages: ['cheerio'],
 

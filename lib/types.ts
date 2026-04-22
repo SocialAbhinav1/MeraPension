@@ -49,25 +49,25 @@ export interface PensionData {
   accountNo: string;
   aadhaarNo?: string;
 
-  // Current Status (raw text may contain "Last Update Status as On: ...")
-  currentStatus: string;
-  currentStatusClean: string;          // Status text without the timestamp suffix
+  // Current Status — raw kept server-side only, only clean versions sent to client
+  currentStatus?: string;              // Internal: stripped before sending to client
+  currentStatusClean: string;
   currentStatusBadge: BadgeType;
-  currentStatusLastUpdate: string;     // Extracted "21 Apr 2026"
+  currentStatusLastUpdate: string;
   removalReason: string;
 
-  // Jeevan Praman / eKYC
-  jpStatus: string;
+  // Jeevan Praman / eKYC — raw kept server-side only
+  jpStatus?: string;                   // Internal: stripped before sending to client
   jpStatusClean: string;
   jpStatusBadge: BadgeType;
-  jpLastDate: string;                  // "Jan 7 2026 4:22PM"
+  jpLastDate: string;
   jpStatusLastUpdate: string;
 
-  // Payment summary (last 2 months, Table 1 col 17)
-  paymentStatusRaw: string;
+  // Payment summary — raw kept server-side only
+  paymentStatusRaw?: string;           // Internal: stripped before sending to client
   paymentStatusClean: string;
   paymentStatusLastUpdate: string;
-  paymentMonths: PaymentMonth[];       // Parsed from summary text
+  paymentMonths: PaymentMonth[];
 
   // Full payment history (Table 2)
   paymentHistory: PaymentRecord[];

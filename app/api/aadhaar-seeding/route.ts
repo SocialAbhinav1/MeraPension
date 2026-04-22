@@ -16,6 +16,25 @@ const SEEDING_TYPE_MAP: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
+  // Block cross-origin requests — this route is called server-to-server internally
+  const origin = req.headers.get('origin');
+  if (origin) {
+    const host = req.headers.get('host') ?? '';
+    try {
+      if (new URL(origin).host !== host) {
+        return NextResponse.json<ApiResponse<null>>(
+          { success: false, error: 'Forbidden.' },
+          { status: 403 }
+        );
+      }
+    } catch {
+      return NextResponse.json<ApiResponse<null>>(
+        { success: false, error: 'Forbidden.' },
+        { status: 403 }
+      );
+    }
+  }
+
   const contentLength = Number(req.headers.get('content-length') ?? '0');
   if (contentLength > 1024) {
     return NextResponse.json<ApiResponse<null>>(
