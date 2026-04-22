@@ -20,9 +20,6 @@ export const metadata: Metadata = {
       'Track your Bihar pension, eKYC, and Jeevan Praman status instantly.',
     type: 'website',
   },
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 export default function RootLayout({
