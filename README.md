@@ -146,26 +146,11 @@ MeraPension/
 
 ---
 
-## 🔐 Security
-
-- **Input sanitization:** All user input is stripped to digits only, max 20 characters, before reaching the Bihar portal
-- **Payload limit:** API routes reject requests larger than 1KB
-- **Security headers:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`
-- **No client error leaks:** Error details only appear in Vercel server logs, never in HTTP responses
-- **No caching:** All API responses have `Cache-Control: no-store`
-
----
-
 ## 🌍 Deploy Your Own
-
-This app deploys to Vercel in one click — no environment variables needed:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/SocialAbhinav1/MeraPension)
 
 Or manually:
 1. Fork this repository
-2. Go to [vercel.com](https://vercel.com) → New Project → Import your fork
-3. Click **Deploy** — done!
+2. Host it whever you want, thnak you.
 
 ---
 
@@ -173,11 +158,7 @@ Or manually:
 
 Contributions are welcome! This is a welfare project — improvements that help Bihar's citizens are especially appreciated.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a Pull Request
+>> Fork the repository
 
 **Areas that need help:**
 - Supporting other state pension portals
