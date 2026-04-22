@@ -223,9 +223,9 @@ function TrustSection() {
 
   const colorMap: Record<string, { bg: string; border: string; iconBg: string; text: string; iconText: string }> = {
     emerald: { bg: 'bg-emerald-50', border: 'border-emerald-100', iconBg: 'bg-emerald-100', text: 'text-emerald-900', iconText: 'text-emerald-700' },
-    sky:     { bg: 'bg-sky-50',     border: 'border-sky-100',     iconBg: 'bg-sky-100',     text: 'text-sky-900',     iconText: 'text-sky-700' },
-    violet:  { bg: 'bg-violet-50',  border: 'border-violet-100',  iconBg: 'bg-violet-100',  text: 'text-violet-900',  iconText: 'text-violet-700' },
-    orange:  { bg: 'bg-orange-50',  border: 'border-orange-100',  iconBg: 'bg-orange-100',  text: 'text-orange-900',  iconText: 'text-orange-700' },
+    sky: { bg: 'bg-sky-50', border: 'border-sky-100', iconBg: 'bg-sky-100', text: 'text-sky-900', iconText: 'text-sky-700' },
+    violet: { bg: 'bg-violet-50', border: 'border-violet-100', iconBg: 'bg-violet-100', text: 'text-violet-900', iconText: 'text-violet-700' },
+    orange: { bg: 'bg-orange-50', border: 'border-orange-100', iconBg: 'bg-orange-100', text: 'text-orange-900', iconText: 'text-orange-700' },
   };
 
   return (
@@ -301,10 +301,8 @@ function TrustSection() {
                 <p className="text-slate-400 text-xs">Developer &amp; Creator</p>
               </div>
             </div>
-            {/* GitHub button — update href when your repo is ready */}
-            {/* ↓ EDIT THIS LINK when your GitHub repo is public ↓ */}
             <a
-              href="https://github.com/YOUR_USERNAME/MeraPension"
+              href="https://github.com/SocialAbhinav1/MeraPension"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
