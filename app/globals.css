@@ -185,33 +185,6 @@
 }
 
 
-/* ─── Quick Summary Glow Card ─────────────────────────────────────────────── */
-.quick-summary-glow {
-  position: relative;
-  border-radius: 18px;
-  padding: 2px;
-  background: linear-gradient(
-    90deg,
-    #f97316 0%,
-    #fb923c 15%,
-    #fbbf24 30%,
-    #4ade80 50%,
-    #38bdf8 65%,
-    #818cf8 80%,
-    #f97316 100%
-  );
-  background-size: 250% 100%;
-  animation: quick-glow-move 4s linear infinite;
-  box-shadow:
-    0 0 24px rgba(249,115,22,0.25),
-    0 0 48px rgba(249,115,22,0.10);
-}
-
-@keyframes quick-glow-move {
-  0%   { background-position: 0%   50%; }
-  100% { background-position: 250% 50%; }
-}
-
 /* Animations */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
