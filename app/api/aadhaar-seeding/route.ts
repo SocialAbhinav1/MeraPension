@@ -8,11 +8,13 @@ import type { ApiResponse, SeedingData } from '@/lib/types';
 
 export const runtime = 'nodejs';
 
-// Map our SearchType to seeding page dropdown values
+// Confirmed June 2026 from live portal HTML:
+// <option value="ben">लाभार्थी संख्या</option>
+// <option value="adr">आधार संख्या</option>
 const SEEDING_TYPE_MAP: Record<string, string> = {
-  'Aadhaar No': '2',      // Aadhaar Number
-  'Labharthi Id': '1',   // Beneficiary ID
-  'Account No': '1',     // Fallback to Beneficiary ID (seeding page doesn't support account no)
+  'Aadhaar No':   'adr',
+  'Labharthi Id': 'ben',
+  'Account No':   'ben', // portal doesn't support account no; fallback to beneficiary
 };
 
 export async function POST(req: NextRequest) {

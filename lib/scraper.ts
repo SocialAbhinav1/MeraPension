@@ -3,6 +3,8 @@ import type { BadgeType, PaymentMonth, PaymentRecord, PensionData, SeedingData }
 
 export const PAYMENT_URL =
   'https://elabharthi.bihar.gov.in/link1/PaymentReports/CheckBeneficiaryPaymentStatus.aspx';
+// Confirmed June 2026: seeding is served from /link1/Public/ subdirectory
+// The old /Aadhaar/AadhaarSeedingSearch.aspx path returns 404
 export const SEEDING_URL =
   'https://elabharthi.bihar.gov.in/link1/Public/AadhaarSeedingSearch.aspx';
 
@@ -60,12 +62,15 @@ export async function fetchViewStateTokens(url: string): Promise<ViewStateTokens
 
 // ─── Status Normalizer ────────────────────────────────────────────────────────
 export function normalizeStatus(raw: string): BadgeType {
-  const t = raw.toLowerCase();
+  const t = raw.toLowerCase().trim();
+  if (!t) return 'neutral';
   if (
     t.includes('सत्यापित') ||
     t.includes('verified') ||
     t.includes('done successfully') ||
     t.includes('success') ||
+    t.includes('active') ||
+    t.includes('सक्रिय') ||
     (t.includes('seeded') && !t.includes('not seeded'))
   )
     return 'success';
@@ -74,7 +79,8 @@ export function normalizeStatus(raw: string): BadgeType {
     t.includes('process') ||
     t.includes('प्रक्रिया') ||
     t.includes('in progress') ||
-    t.includes('प्रोसेस')
+    t.includes('प्रोसेस') ||
+    t.includes('awaiting')
   )
     return 'warning';
   if (
@@ -82,7 +88,10 @@ export function normalizeStatus(raw: string): BadgeType {
     t.includes('नहीं') ||
     t.includes('failed') ||
     t.includes('removed') ||
-    t.includes('हटाया')
+    t.includes('हटाया') ||
+    t.includes('rejected') ||
+    t.includes('invalid') ||
+    t.includes('expired')
   )
     return 'danger';
   if (t.includes('लॉक') || t.includes('lock')) return 'locked';
@@ -398,8 +407,9 @@ export function parseSeedingHtml(html: string): SeedingData | null {
   const cells = $(dataRow).find('td');
   const cell = (i: number) => $(cells[i]).text().trim();
 
-  // Columns: 0:Sr, 1:Beneficiary Id, 2:Name, 3:Aadhar No, 4:District, 5:Block, 6:Panchayat, 7:Status
-  const status = cell(7);
+  // Confirmed June 2026 column layout:
+  // 0:Sr, 1:Beneficiary Id, 2:Name, 3:Aadhaar No, 4:District, 5:Block, 6:Panchayat, 7:Status
+  const status = cell(7) || cell(6) || cell(5); // fallback if columns shift
   return {
     beneficiaryId: cell(1),
     name: cell(2),

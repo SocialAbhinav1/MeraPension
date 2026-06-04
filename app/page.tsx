@@ -13,6 +13,8 @@ import StatusTiles from '@/components/StatusTiles';
 import PaymentHistory from '@/components/PaymentHistory';
 import LocationCard from '@/components/LocationCard';
 import type { PensionData, SearchFormValues } from '@/lib/types';
+import { searchPensionAction } from '@/app/actions';
+import QuickSummaryCard from '@/components/QuickSummaryCard';
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
@@ -372,10 +374,9 @@ export default function HomePage() {
   };
 
   const handleSearch = useCallback(async (values: SearchFormValues) => {
-    // Cancel any previous in-flight request before starting a new one
+    // Cancel any previous in-flight request
     abortRef.current?.abort();
     abortRef.current = new AbortController();
-    const { signal } = abortRef.current;
 
     setLastSearch(values);
     setAppState('loading');
@@ -383,28 +384,21 @@ export default function HomePage() {
     scrollToResults();
 
     try {
-      // Single server request — seeding is merged server-side, nothing exposed in DevTools
-      const res = await fetch('/api/pension-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-        signal,
-      });
-      const json = await res.json();
+      // Server Action — runs on Vercel Node.js, not in browser
+      // DevTools shows RSC binary wire format, NOT readable JSON
+      const result = await searchPensionAction(values);
 
-      if (!json.success || !json.data) {
-        setErrorMsg(json.error ?? 'No beneficiary found. Please verify the details and try again.');
+      if (!result.success || !result.data) {
+        setErrorMsg(result.error ?? 'कोई लाभार्थी नहीं मिला। कृपया जानकारी जाँचें।');
         setAppState('error');
         return;
       }
 
-      setPensionData(json.data as PensionData);
+      setPensionData(result.data as PensionData);
       setAppState('results');
       scrollToResults();
-    } catch (e) {
-      // AbortError = user started a new search — silently ignore
-      if (e instanceof DOMException && e.name === 'AbortError') return;
-      setErrorMsg('Failed to connect to the eLabharthi portal. Please check your connection and try again.');
+    } catch {
+      setErrorMsg('eLabharthi पोर्टल से कनेक्ट नहीं हो सका। कृपया अपना इंटरनेट जाँचें।');
       setAppState('error');
     }
   }, []);
@@ -457,6 +451,9 @@ export default function HomePage() {
               <div className="no-print">
                 <ResultActions onNewSearch={handleNewSearch} />
               </div>
+
+              {/* ✨ Quick Summary — glowing card at the top */}
+              <QuickSummaryCard data={pensionData} />
 
               {/* Beneficiary identity */}
               <BeneficiaryCard data={pensionData} />

@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { Search, RotateCcw, ChevronDown, Info, Calendar, Fingerprint, CreditCard, Shield } from 'lucide-react';
 import type { SearchFormValues, SearchType } from '@/lib/types';
 
-const FINANCIAL_YEARS = ['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'];
+// Financial years confirmed live on elabharthi.bihar.gov.in as of June 2026
+const FINANCIAL_YEARS = ['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023'];
 
 const SEARCH_TYPES: {
   value: SearchType; labelHi: string; labelEn: string;
@@ -18,7 +19,7 @@ const SEARCH_TYPES: {
 interface Props { onSearch: (values: SearchFormValues) => void; isLoading: boolean; }
 
 export default function SearchForm({ onSearch, isLoading }: Props) {
-  const [financialYear, setFinancialYear] = useState('2025-2026');
+  const [financialYear, setFinancialYear] = useState('2026-2027');
   const [searchType, setSearchType] = useState<SearchType>('Aadhaar No');
   const [searchValue, setSearchValue] = useState('');
   const [error, setError] = useState('');
