@@ -57,7 +57,7 @@ export default function SearchForm({ onSearch, isLoading }: Props) {
   }
 
   function handleReset() {
-    setFinancialYear('2025-2026'); setSearchType('Aadhaar No');
+    setFinancialYear('2026-2027'); setSearchType('Aadhaar No');
     setSearchValue(''); setError('');
   }
 
@@ -141,7 +141,7 @@ export default function SearchForm({ onSearch, isLoading }: Props) {
               onChange={(e) => handleValueChange(e.target.value)}
               placeholder={currentType.placeholder}
               maxLength={currentType.maxLength}
-              className={`w-full bg-slate-50 border-2 rounded-xl px-4 py-4 text-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all font-mono tracking-widest ${
+              className={`w-full bg-slate-50 border-2 rounded-xl px-4 py-3.5 text-base md:text-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-all font-mono tracking-wider md:tracking-widest ${
                 error
                   ? 'border-red-400 focus:ring-red-300 bg-red-50'
                   : 'border-slate-200 focus:ring-orange-400 focus:border-orange-400 hover:border-orange-300'
