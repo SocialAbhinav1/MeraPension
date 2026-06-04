@@ -389,7 +389,13 @@ export default function HomePage() {
       const result = await searchPensionAction(values);
 
       if (!result.success) {
-        setErrorMsg(result.error);
+        setErrorMsg(result.error ?? 'कोई लाभार्थी नहीं मिला। कृपया जानकारी जाँचें।');
+        setAppState('error');
+        return;
+      }
+
+      if (!result.data) {
+        setErrorMsg('कोई लाभार्थी नहीं मिला। कृपया जानकारी जाँचें।');
         setAppState('error');
         return;
       }
@@ -452,7 +458,7 @@ export default function HomePage() {
                 <ResultActions onNewSearch={handleNewSearch} />
               </div>
 
-              {/* ✨ Quick Summary — glowing card at the top */}
+              {/* ✨ Glowing quick-summary popup card */}
               <QuickSummaryCard data={pensionData} />
 
               {/* Beneficiary identity */}

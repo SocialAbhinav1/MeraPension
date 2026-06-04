@@ -278,13 +278,13 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
   const allTables: cheerio.Cheerio<any>[] = [];
   $('table').each((_, table) => { allTables.push($(table)); });
 
-  // Table 1: Beneficiary details — find table with ≥18 columns in data row
+  // Find Table 1: beneficiary details — first table with ≥14 columns in data row
   let dataTable: any = null;
   for (const table of allTables) {
     const rows = $(table).find('tr');
     if (rows.length < 2) continue;
     const secondRowCells = $(rows[1]).find('td');
-    if (secondRowCells.length >= 15) {
+    if (secondRowCells.length >= 14) {
       dataTable = table;
       break;
     }
@@ -297,27 +297,34 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
   rows.each((idx, row) => {
     if (idx === 0) return;
     const cells = $(row).find('td');
-    if (cells.length >= 15) { dataRow = row; return false; }
+    if (cells.length >= 14) { dataRow = row; return false; }
   });
 
   if (!dataRow) return null;
 
   const cells = $(dataRow).find('td');
-  const cell = (i: number) => $(cells[i]).text().trim();
+  const colCount = cells.length;
+  const cell = (i: number) => i >= 0 && i < colCount ? $(cells[i]).text().trim() : '';
 
-  // Column mapping (confirmed from live portal):
-  // 0: Sr, 1: District, 2: Block, 3: Panchayat, 4: Village
-  // 5: Scheme, 6: Beneficiary ID, 7: SSPMIS ID, 8: Name, 9: Father/Husband
-  // 10: DOB, 11: DOB(Aadhaar), 12: Account No
-  // 13: Current Status (contains "... Last Update Status as On: DATE")
-  // 14: Removal Reason
-  // 15: JP Status (contains "... Last Update Status as On: DATE")
-  // 16: JP Last Date
-  // 17: Payment Status Summary (contains "... Last Update Status as On: DATE")
+  // ── Adaptive column mapping ──────────────────────────────────────────────────
+  // OLD layout (18 cols): had DOB(Aadhaar) col 11, Account col 12,
+  //   CurrentStatus 13, RemovalReason 14, JPStatus 15, JPLastDate 16, PayStatus 17
+  //
+  // NEW layout (15 cols, confirmed Jun 2026 from screenshot):
+  //   DOB(Aadhaar) removed, RemovalReason removed, JPLastDate merged into JPStatus
+  //   Account col 11, CurrentStatus 12, JPStatus 13, PayStatus 14
+  const isOldLayout = colCount >= 18;
 
-  const currentStatusRaw = cell(13);
-  const jpStatusRaw = cell(15);
-  const paymentRaw = cell(17);
+  const accountNoIdx     = isOldLayout ? 12 : 11;
+  const currentStatusIdx = isOldLayout ? 13 : 12;
+  const removalReasonIdx = isOldLayout ? 14 : -1;
+  const jpStatusIdx      = isOldLayout ? 15 : 13;
+  const jpLastDateColIdx = isOldLayout ? 16 : -1;
+  const paymentStatusIdx = isOldLayout ? 17 : 14;
+
+  const currentStatusRaw = cell(currentStatusIdx);
+  const jpStatusRaw      = cell(jpStatusIdx);
+  const paymentRaw       = cell(paymentStatusIdx);
 
   const { clean: currentStatusClean, lastUpdate: currentStatusLastUpdate } =
     splitStatusAndDate(currentStatusRaw);
@@ -326,18 +333,37 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
   const { clean: paymentStatusClean, lastUpdate: paymentStatusLastUpdate } =
     splitStatusAndDate(paymentRaw);
 
-  // JP Last Date: may contain timestamp like "Jan 7 2026 4:22PM"
-  const jpLastDateRaw = cell(16);
+  // JP Last Date — in old layout it's a separate cell; in new layout extract from text
+  // e.g. "(Jan 13 2026 7:26PM)"
+  let jpLastDateRaw = '';
+  if (isOldLayout) {
+    jpLastDateRaw = cell(jpLastDateColIdx);
+  } else {
+    const m = jpStatusRaw.match(/\(([^)]+\d{4}[^)]*[AP]M)\)/i)
+           || jpStatusRaw.match(/\(([^)]*\d{1,2}\s+\w+\s+\d{4}[^)]*)\)/);
+    if (m) jpLastDateRaw = m[1].trim();
+  }
 
   const schemeName = cell(5);
 
   // Table 2: Full payment history
   const paymentHistory = parsePaymentHistoryTable($, allTables);
 
+  // Parse payment months — sorted latest-first
+  const paymentMonthsRaw = parsePaymentMonths(paymentStatusClean || paymentRaw);
+  paymentMonthsRaw.sort((a, b) => {
+    const parseKey = (s: string) => {
+      const match = s.match(/([A-Za-z\u0900-\u097F]+)[- ](\d{4})/);
+      if (!match) return 0;
+      const mNum = MONTH_MAP[match[1].toLowerCase()] || 0;
+      return parseInt(match[2], 10) * 100 + mNum;
+    };
+    return parseKey(b.month) - parseKey(a.month);
+  });
+
   return {
     name: cell(8),
     fatherName: cell(9),
-    // Keep full beneficiary ID including leading zeros
     beneficiaryId: cell(6),
     sspmisId: cell(7),
     schemeName,
@@ -349,14 +375,14 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
     village: cell(4),
 
     dob: cell(10),
-    dobAadhaar: cell(11),
-    accountNo: cell(12),
+    dobAadhaar: isOldLayout ? cell(11) : '',
+    accountNo: cell(accountNoIdx),
 
     currentStatus: currentStatusRaw,
     currentStatusClean,
     currentStatusBadge: normalizeStatus(currentStatusClean),
     currentStatusLastUpdate,
-    removalReason: cell(14),
+    removalReason: removalReasonIdx >= 0 ? cell(removalReasonIdx) : '',
 
     jpStatus: jpStatusRaw,
     jpStatusClean,
@@ -367,7 +393,8 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
     paymentStatusRaw: paymentRaw,
     paymentStatusClean,
     paymentStatusLastUpdate,
-    paymentMonths: parsePaymentMonths(paymentStatusClean || paymentRaw),
+    paymentMonths: paymentMonthsRaw,
+
 
     paymentHistory,
 
