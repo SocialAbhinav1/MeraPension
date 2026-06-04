@@ -388,8 +388,8 @@ export default function HomePage() {
       // DevTools shows RSC binary wire format, NOT readable JSON
       const result = await searchPensionAction(values);
 
-      if (!result.success || !result.data) {
-        setErrorMsg(result.error ?? 'कोई लाभार्थी नहीं मिला। कृपया जानकारी जाँचें।');
+      if (!result.success) {
+        setErrorMsg(result.error);
         setAppState('error');
         return;
       }
