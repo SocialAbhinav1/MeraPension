@@ -50,12 +50,24 @@ const HINDI_MONTHS: Record<string, string> = {
 
 function formatMonth(val: string): string {
   if (!val) return '';
+  // Try matching Hindi/English words first
   const m = val.match(/([A-Za-zऀ-ॿ\u0900-\u097F]+)[-\s]?(\d{4})/);
   if (m) {
     const rawMonth = m[1].toLowerCase();
     const year = m[2];
     const hindiMonth = HINDI_MONTHS[rawMonth] || m[1];
     return `${hindiMonth} ${year}`;
+  }
+  // Match DD/MM/YYYY and convert to "DD month YYYY"
+  const dateMatch = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (dateMatch) {
+    const day = dateMatch[1];
+    const monthNum = parseInt(dateMatch[2], 10);
+    const year = dateMatch[3];
+    const monthNames = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+    if (monthNum >= 1 && monthNum <= 12) {
+      return `${day} ${monthNames[monthNum - 1]} ${year}`;
+    }
   }
   return val;
 }
@@ -169,15 +181,16 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
 
       {/* ─── Desktop Table View (hidden on mobile) ─── */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full min-w-[700px]">
+        <table className="w-full min-w-[800px]">
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
-              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>माह/Month</th>
-              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>राशि/Amount</th>
-              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>UTR / भुगतान तिथि</th>
-              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>खाता/Account</th>
+            <tr style={{ borderBottom: '2px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>माह / Month</th>
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>राशि / Amount</th>
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>UTR No.</th>
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>भुगतान तिथि / Date</th>
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>खाता / Account</th>
               {hasAnyBank && (
-                <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>बैंक/Bank</th>
+                <th className="py-4 px-6 text-xs font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>बैंक / Bank</th>
               )}
             </tr>
           </thead>
@@ -185,66 +198,67 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
             {records.map((r, i) => (
               <tr
                 key={i}
-                className="transition-colors animate-fade-in-up hover:bg-slate-50/50"
+                className="transition-colors animate-fade-in-up hover:bg-slate-50"
                 style={{
                   borderBottom: '1px solid var(--color-hairline-soft)',
                   animationDelay: `${i * 30}ms`,
                 }}
               >
                 {/* Month range */}
-                <td className="py-4 px-5">
-                  <div className="flex flex-col gap-0.5">
+                <td className="py-5 px-6 align-top">
+                  <div className="flex flex-col gap-1">
                     {(() => {
                       const fromM = formatMonth(r.fromMonth);
                       const toM = formatMonth(r.toMonth);
                       if (fromM && toM && fromM !== toM) {
                         return (
                           <>
-                            <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
-                            <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
+                            <span className="text-base font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
+                            <span className="text-base font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
                           </>
                         );
                       } else {
-                        return <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>;
+                        return <span className="text-base font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>;
                       }
                     })()}
                   </div>
                 </td>
                 
                 {/* Amount */}
-                <td className="py-4 px-5">
-                  <span className="text-[14px] font-bold font-mono" style={{ color: '#15803d' }}>
+                <td className="py-5 px-6 align-top">
+                  <span className="text-lg font-bold font-mono" style={{ color: '#15803d' }}>
                     {r.amount ? `₹${r.amount}` : '—'}
                   </span>
                 </td>
                 
-                {/* UTR & Payment Date */}
-                <td className="py-4 px-5">
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[13px] font-mono select-all font-bold" style={{ color: 'var(--color-body)' }}>
-                      {r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}
-                    </span>
-                    {r.paymentDate && (
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>भुगतान तिथि / Date</span>
-                        <span className="text-[12px] font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
-                      </div>
-                    )}
-                  </div>
+                {/* UTR */}
+                <td className="py-5 px-6 align-top">
+                  <span className="text-sm font-mono select-all font-bold" style={{ color: 'var(--color-body)' }}>
+                    {r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}
+                  </span>
+                </td>
+                
+                {/* Payment Date */}
+                <td className="py-5 px-6 align-top">
+                  {r.paymentDate ? (
+                    <span className="text-sm font-mono font-bold whitespace-nowrap" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                  ) : (
+                    <span className="text-sm font-bold" style={{ color: 'var(--color-muted)' }}>—</span>
+                  )}
                 </td>
                 
                 {/* Account */}
-                <td className="py-4 px-5">
+                <td className="py-5 px-6 align-top">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[13px] font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
-                    <span className="text-[12px] truncate max-w-[140px] font-medium" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
+                    <span className="text-sm font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
+                    <span className="text-sm truncate max-w-[160px] font-medium" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
                   </div>
                 </td>
                 
                 {/* Bank */}
                 {hasAnyBank && (
-                  <td className="py-4 px-5">
-                    <span className="text-[13px] font-medium leading-snug" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
+                  <td className="py-5 px-6 align-top">
+                    <span className="text-sm font-medium leading-snug" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
                   </td>
                 )}
               </tr>
