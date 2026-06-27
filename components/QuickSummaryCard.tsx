@@ -1,6 +1,6 @@
 'use client';
 
-import { ShieldCheck, IndianRupee, Calendar, CheckCircle2, Clock, XCircle, Lock, HelpCircle } from 'lucide-react';
+import { ShieldCheck, IndianRupee, Calendar, CheckCircle2, Clock, XCircle, Lock, HelpCircle, Activity } from 'lucide-react';
 import type { BadgeType, PensionData } from '@/lib/types';
 
 interface Props { data: PensionData }
@@ -48,70 +48,99 @@ export default function QuickSummaryCard({ data }: Props) {
   const t = THEME[data.currentStatusBadge];
   const recent = data.paymentMonths.slice(0, 2);
 
+  const splitStatus = (status: string) => {
+    const parts = status.split(' — ');
+    return { title: parts[0], desc: parts[1] || '' };
+  };
+
+  const curr = splitStatus(data.currentStatusClean || '—');
+
   return (
-    <div
-      className="rounded-2xl overflow-hidden animate-fade-in-up mb-2"
-      style={{
-        background: t.bg,
-        border: `1px solid ${t.border}`,
-        borderLeft: `4px solid ${t.borderL}`,
-        boxShadow: 'var(--shadow-card)',
-      }}
-    >
-      {/* ── Section 1: Pension Status ─────────────────── */}
-      <div className="px-5 pt-4 pb-3">
-        <div className="flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex items-center gap-2">
-            {/* Pulsing dot */}
-            <span className="relative flex w-2 h-2 flex-shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style={{ background: t.dot }} />
-              <span className="relative inline-flex rounded-full w-2 h-2" style={{ background: t.dot }} />
-            </span>
-            <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
-            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
-              पेंशन स्थिति / Pension Status
-            </span>
-          </div>
-          {data.currentStatusLastUpdate && (
-            <div className="flex items-center gap-1 text-[10px] flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }}>
-              <Calendar className="w-3 h-3" />
-              <span>{data.currentStatusLastUpdate}</span>
+    <div className="flex flex-col gap-4 mb-4">
+      {/* ── Section 1: Overall Status Card ─────────────────── */}
+      <div
+        className="rounded-2xl p-5 relative overflow-hidden transition-all duration-300"
+        style={{
+          background: t.bg,
+          border: `1px solid ${t.border}`,
+          boxShadow: 'var(--shadow-card)',
+        }}
+      >
+        {/* Decorative left accent line */}
+        <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ background: t.borderL }} />
+        
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-sm" style={{ background: '#fff', border: `1px solid ${t.border}` }}>
+              <ShieldCheck className="w-5 h-5" style={{ color: t.borderL }} />
             </div>
-          )}
+            <div>
+              <h2 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
+                वर्तमान स्थिति / Current Status
+              </h2>
+              {data.currentStatusLastUpdate && (
+                <div className="flex items-center gap-1.5 text-[10px] mt-1 font-medium" style={{ color: 'var(--color-muted-soft)' }}>
+                  <Calendar className="w-3 h-3" />
+                  <span>अपडेट: {data.currentStatusLastUpdate}</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Status Badge */}
+          <div className="px-3.5 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2 shadow-sm w-fit" style={{ background: '#fff', borderColor: t.border, color: t.label }}>
+             <span className="relative flex w-1.5 h-1.5">
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: t.dot }} />
+               <span className="relative inline-flex rounded-full w-1.5 h-1.5" style={{ background: t.dot }} />
+             </span>
+             {curr.title}
+          </div>
         </div>
 
-        <p className="font-semibold text-sm devanagari leading-snug" style={{ color: t.label }}>
-          {data.currentStatusClean || '—'}
-        </p>
+        {curr.desc && (
+          <div className="bg-white/60 p-4 rounded-xl mt-2 ml-0 sm:ml-12" style={{ border: `1px solid ${t.border}` }}>
+            <p className="text-sm devanagari leading-relaxed" style={{ color: 'var(--color-ink)' }}>
+              {curr.desc}
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* ── Section 2: Recent Payments ────────────────── */}
+      {/* ── Section 2: Recent Payment Activity ────────────────── */}
       {recent.length > 0 && (
-        <div className="border-t px-5 pt-3 pb-4" style={{ borderColor: `${t.border}` }}>
-          <div className="flex items-center gap-1.5 mb-2.5">
-            <IndianRupee className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--color-muted)' }} />
-            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
+        <div className="rounded-2xl p-5 transition-all duration-300" style={{ background: 'var(--color-canvas)', border: '1px solid var(--color-hairline)', boxShadow: 'var(--shadow-card)' }}>
+          <div className="flex items-center gap-2.5 mb-5">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-hairline)' }}>
+              <IndianRupee className="w-4 h-4" style={{ color: 'var(--color-muted)' }} />
+            </div>
+            <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
               हाल के भुगतान / Recent Payments
-            </span>
+            </h3>
           </div>
-
-          <div className="flex flex-col gap-2">
+          
+          <div className="flex flex-col gap-3">
             {recent.map((pm, i) => {
               const pm_t = THEME[pm.badgeType];
+              const pm_curr = splitStatus(pm.status);
               return (
-                <div
-                  key={i}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                  style={{ background: pm_t.payBg, border: `1px solid ${pm_t.payBorder}` }}
-                >
-                  {PAY_ICON[pm.badgeType]}
-                  <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
-                    <span className="text-xs font-bold devanagari whitespace-nowrap" style={{ color: 'var(--color-ink)' }}>
-                      {pm.month}
-                    </span>
-                    <span className="text-xs font-medium devanagari leading-snug" style={{ color: pm_t.label }}>
-                      {pm.status}
-                    </span>
+                <div key={i} className="flex gap-4 p-4 rounded-xl border transition-colors hover:shadow-sm" style={{ borderColor: pm_t.border, background: pm_t.bg }}>
+                  <div className="mt-0.5 bg-white rounded-full p-1.5 shadow-sm border h-fit" style={{ borderColor: pm_t.border }}>
+                    {PAY_ICON[pm.badgeType]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
+                      <span className="font-bold text-sm devanagari" style={{ color: pm_t.label }}>
+                        {pm_curr.title}
+                      </span>
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-md" style={{ background: 'rgba(0,0,0,0.04)', color: 'var(--color-ink)' }}>
+                        {pm.month}
+                      </span>
+                    </div>
+                    {pm_curr.desc && (
+                      <p className="text-xs leading-relaxed devanagari mt-1.5" style={{ color: 'var(--color-body)' }}>
+                        {pm_curr.desc}
+                      </p>
+                    )}
                   </div>
                 </div>
               );

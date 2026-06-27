@@ -251,6 +251,16 @@ const MONTH_MAP: Record<string, number> = {
 
 function parseMonthYearSortKey(val: string): number {
   if (!val) return 0;
+  
+  // Try DD/MM/YYYY format first
+  const dateMatch = val.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (dateMatch) {
+    const month = parseInt(dateMatch[2], 10);
+    const year = parseInt(dateMatch[3], 10);
+    return year * 100 + month;
+  }
+
+  // Fallback to text matching (e.g. 'April 2026')
   const m = val.match(/([A-Za-zऀ-ॿ\u0900-\u097F]+)[-\s]?(\d{4})/);
   if (m) {
     const month = m[1].toLowerCase();
