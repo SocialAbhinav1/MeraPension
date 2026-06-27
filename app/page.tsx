@@ -14,6 +14,7 @@ import PaymentHistory from '@/components/PaymentHistory';
 import LocationCard from '@/components/LocationCard';
 import type { PensionData, SearchFormValues } from '@/lib/types';
 import { searchPensionAction } from '@/app/actions';
+import QuickSummaryCard from '@/components/QuickSummaryCard';
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
@@ -46,10 +47,10 @@ function HeroSection() {
 
         {/* Brand headline */}
         <div className="text-center mb-7">
-          <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tight leading-[1.08] pt-1 pb-1 overflow-visible"
-            style={{ fontFamily: "var(--font-display)", letterSpacing: '-0.02em' }}>
-            <span className="gradient-text-serif">मेरा</span>
-            <span style={{ color: 'var(--color-ink)' }}> Pension</span>
+          <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-[1.08] pt-1 pb-1 overflow-visible"
+            style={{ color: 'var(--color-ink)' }}>
+            <span className="gradient-text-saffron">मेरा</span>
+            <span> Pension</span>
           </h1>
           <p className="devanagari mt-3 text-xl md:text-2xl font-medium"
             style={{ color: 'var(--color-body)' }}>
@@ -172,6 +173,8 @@ function HowItWorks() {
     },
   ];
 
+  const colors = ['feature-card-teal', 'feature-card-coral', 'feature-card-gold', 'feature-card-cream'];
+
   return (
     <div className="mt-16 mb-4">
       {/* Section header */}
@@ -179,8 +182,8 @@ function HowItWorks() {
         <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--color-primary)' }}>
           Step by Step
         </p>
-        <h2 className="font-display text-3xl md:text-4xl font-semibold"
-          style={{ fontFamily: "var(--font-display)", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
+        <h2 className="font-display text-3xl md:text-4xl"
+          style={{ color: 'var(--color-ink)' }}>
           कैसे इस्तेमाल करें
         </h2>
         <p className="mt-2 text-base" style={{ color: 'var(--color-muted)' }}>How To Use MeraPension</p>
@@ -190,21 +193,18 @@ function HowItWorks() {
         {steps.map((s, idx) => (
           <div
             key={s.n}
-            className="relative rounded-2xl p-6 group transition-all duration-300 hover:-translate-y-1"
+            className={`relative p-6 group transition-all duration-300 hover:-translate-y-1 ${colors[idx]}`}
             style={{
-              background: 'var(--color-canvas)',
-              border: '1px solid var(--color-hairline)',
               boxShadow: 'var(--shadow-card)',
               animationDelay: `${idx * 80}ms`,
             }}
           >
             {/* Step number — editorial serif */}
             <span
-              className="block text-4xl font-semibold mb-4 leading-none"
+              className="block text-4xl mb-4 leading-none font-display"
               style={{
-                fontFamily: "var(--font-display)",
-                color: 'var(--color-primary)',
-                opacity: 0.85,
+                color: 'inherit',
+                opacity: 0.9,
               }}
             >
               {s.n}
@@ -212,17 +212,17 @@ function HowItWorks() {
 
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl leading-none">{s.emoji}</span>
-              <h3 className="text-sm font-bold devanagari leading-snug" style={{ color: 'var(--color-ink)' }}>
+              <h3 className="text-sm font-bold devanagari leading-snug" style={{ color: 'inherit' }}>
                 {s.title}
               </h3>
             </div>
 
-            <p className="text-xs text-sm leading-relaxed devanagari" style={{ color: 'var(--color-muted)' }}>
+            <p className="text-xs text-sm leading-relaxed devanagari" style={{ color: 'inherit', opacity: 0.9 }}>
               {s.desc}
             </p>
 
             {/* Bottom label */}
-            <p className="mt-3 text-xs font-medium" style={{ color: 'var(--color-muted-soft)' }}>
+            <p className="mt-3 text-xs font-medium" style={{ opacity: 0.75 }}>
               {s.titleEn}
             </p>
           </div>
@@ -277,8 +277,8 @@ function TrustSection() {
           </span>
           Open Source · Free · No Data Stored
         </span>
-        <h2 className="font-display text-3xl md:text-4xl font-semibold devanagari"
-          style={{ fontFamily: "var(--font-display)", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
+        <h2 className="font-display text-3xl md:text-4xl devanagari"
+          style={{ color: 'var(--color-ink)' }}>
           आप भरोसे के साथ इस्तेमाल करें
         </h2>
         <p className="mt-2 text-base" style={{ color: 'var(--color-muted)' }}>
@@ -313,66 +313,7 @@ function TrustSection() {
         ))}
       </div>
 
-      {/* Dark open-source banner */}
-      <div
-        className="relative rounded-2xl overflow-hidden p-6 md:p-10"
-        style={{ background: 'var(--color-surface-dark)', border: '1px solid rgba(255,255,255,0.06)' }}
-      >
-        {/* Subtle decorative blobs */}
-        <div className="absolute -top-14 -right-14 w-56 h-56 rounded-full pointer-events-none" style={{ background: 'rgba(249,115,22,0.07)', filter: 'blur(40px)' }} />
-        <div className="absolute -bottom-14 -left-14 w-56 h-56 rounded-full pointer-events-none" style={{ background: 'rgba(251,191,36,0.05)', filter: 'blur(40px)' }} />
 
-        <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          {/* Left */}
-          <div className="flex flex-col gap-4 flex-1">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🔓</span>
-              <span className="text-xl font-bold" style={{ color: 'var(--color-on-dark)' }}>100% Open Source</span>
-            </div>
-            <p className="text-sm leading-relaxed max-w-lg devanagari" style={{ color: 'var(--color-on-dark-soft)' }}>
-              मेरा Pension एक स्वतंत्र परियोजना है — बिहार के वृद्ध, विधवाओं और दिव्यांग नागरिकों के कल्याण के लिए।{' '}
-              This app reads publicly available government data. It stores nothing, charges nothing, and harms nothing.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {['✅ कोई डेटा सेव नहीं', '✅ कोई लॉगिन नहीं', '✅ Free Forever', '✅ Open Source', '✅ No Ads'].map((b) => (
-                <span key={b}
-                  className="px-3 py-1 rounded-full text-xs font-medium devanagari"
-                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--color-on-dark-soft)' }}>
-                  {b}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Right */}
-          <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[220px]">
-            {/* Developer credit */}
-            <div className="flex items-center gap-3 p-4 rounded-xl"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #f97316, #fbbf24)', color: 'var(--color-surface-dark)' }}>
-                AK
-              </div>
-              <div>
-                <p className="font-semibold text-sm" style={{ color: 'var(--color-on-dark)' }}>Abhinav Kumar</p>
-                <p className="text-xs" style={{ color: 'var(--color-on-dark-soft)' }}>Developer &amp; Creator</p>
-              </div>
-            </div>
-            <a
-              href="https://github.com/SocialAbhinav1/MeraPension"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5"
-              style={{ background: 'rgba(255,255,255,0.09)', border: '1px solid rgba(255,255,255,0.15)', color: 'var(--color-on-dark)' }}
-            >
-              <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" style={{ fill: 'var(--color-on-dark)' }} xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-              </svg>
-              View Source on GitHub
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -386,7 +327,7 @@ function Footer() {
           {/* Brand */}
           <div>
             <p className="font-semibold text-lg" style={{ color: 'var(--color-on-dark)' }}>
-              <span className="gradient-text-serif" style={{ fontFamily: "var(--font-display)" }}>MeraPension</span>
+              <span className="font-display gradient-text-saffron">MeraPension</span>
               <span style={{ color: 'var(--color-on-dark-soft)' }}> — Bihar Pension Tracker</span>
             </p>
             <p className="text-xs mt-1.5" style={{ color: 'var(--color-on-dark-soft)' }}>
@@ -531,7 +472,8 @@ export default function HomePage() {
                 <ResultActions onNewSearch={handleNewSearch} />
               </div>
 
-
+              {/* Quick summary */}
+              <QuickSummaryCard data={pensionData} />
 
               {/* Beneficiary identity */}
               <BeneficiaryCard data={pensionData} />

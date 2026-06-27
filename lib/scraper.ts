@@ -1,12 +1,8 @@
 import * as cheerio from 'cheerio';
-import type { BadgeType, PaymentMonth, PaymentRecord, PensionData, SeedingData } from './types';
+import type { BadgeType, PaymentMonth, PaymentRecord, PensionData } from './types';
 
 export const PAYMENT_URL =
   'https://elabharthi.bihar.gov.in/link1/PaymentReports/CheckBeneficiaryPaymentStatus.aspx';
-// Confirmed June 2026: seeding is served from /link1/Public/ subdirectory
-// The old /Aadhaar/AadhaarSeedingSearch.aspx path returns 404
-export const SEEDING_URL =
-  'https://elabharthi.bihar.gov.in/link1/Public/AadhaarSeedingSearch.aspx';
 
 const DEFAULT_HEADERS = {
   'User-Agent':
@@ -398,53 +394,8 @@ export function parsePaymentStatusHtml(html: string): PensionData | null {
 
     paymentHistory,
 
-    aadhaarSeedingStatus: 'अज्ञात (Unknown)',
-    aadhaarSeedingBadge: 'neutral',
+
   };
 }
 
-// ─── Aadhaar Seeding Page Parser ──────────────────────────────────────────────
-export function parseSeedingHtml(html: string): SeedingData | null {
-  const $ = cheerio.load(html);
 
-  let dataTable: any = null;
-  $('table').each((_, table) => {
-    const rows = $(table).find('tr');
-    if (rows.length >= 2) {
-      const secondRowCells = $(rows[1]).find('td');
-      if (secondRowCells.length >= 4) {
-        dataTable = $(table);
-        return false;
-      }
-    }
-  });
-
-  if (!dataTable) return null;
-
-  const rows = $(dataTable).find('tr');
-  let dataRow: any = null;
-  rows.each((idx, row) => {
-    if (idx === 0) return;
-    const cells = $(row).find('td');
-    if (cells.length >= 4) { dataRow = $(row); return false; }
-  });
-
-  if (!dataRow) return null;
-
-  const cells = $(dataRow).find('td');
-  const cell = (i: number) => $(cells[i]).text().trim();
-
-  // Confirmed June 2026 column layout:
-  // 0:Sr, 1:Beneficiary Id, 2:Name, 3:Aadhaar No, 4:District, 5:Block, 6:Panchayat, 7:Status
-  const status = cell(7) || cell(6) || cell(5); // fallback if columns shift
-  return {
-    beneficiaryId: cell(1),
-    name: cell(2),
-    aadhaarNo: cell(3),
-    district: cell(4),
-    block: cell(5),
-    panchayat: cell(6),
-    status,
-    statusBadge: normalizeStatus(status),
-  };
-}

@@ -7,62 +7,55 @@ interface Props { data: PensionData; }
 
 export default function LocationCard({ data }: Props) {
   const crumbs = [
-    { label: data.district, sub: 'जिला / District' },
-    { label: data.block, sub: 'ब्लॉक / Block' },
-    { label: data.panchayat, sub: 'पंचायत / Panchayat' },
-    { label: data.village, sub: 'ग्राम / Village' },
+    { label: 'Bihar', sub: 'राज्य' },
+    { label: data.district, sub: 'जिला' },
+    { label: data.block, sub: 'ब्लॉक' },
+    { label: data.panchayat, sub: 'पंचायत' },
+    { label: data.village, sub: 'ग्राम/वार्ड' },
   ].filter((c) => c.label);
 
   return (
     <div
-      className="passbook-cover mt-4 animate-fade-in-up"
-      style={{ animationDelay: '300ms' }}
+      className="passbook p-5 animate-fade-in-up"
+      style={{
+        animationDelay: '280ms',
+      }}
     >
-      <div className="p-6 md:p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <MapPin className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
-          <h3 className="text-sm font-semibold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
-            पता / Address
-          </h3>
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center"
+          style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}
+        >
+          <MapPin className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
         </div>
+        <div>
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-ink)' }}>पता / Location</h3>
+          <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Residential Address</p>
+        </div>
+      </div>
 
-        {/* Infographic Breadcrumb Path */}
-        <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-2">
-          {crumbs.map((crumb, i) => (
-            <div key={i} className="flex flex-row md:flex-col items-start md:items-center relative group">
-              
-              {/* Mobile Vertical Line */}
-              {i < crumbs.length - 1 && (
-                <div className="absolute left-2.5 top-6 bottom-[-16px] w-[2px] md:hidden" style={{ background: 'var(--color-hairline)' }} />
-              )}
-              
-              <div className="flex items-center gap-4 md:gap-0 w-full md:w-auto">
-                {/* Node Dot */}
-                <div 
-                  className="w-5 h-5 rounded-full flex items-center justify-center relative z-10 flex-shrink-0"
-                  style={{ background: i === crumbs.length - 1 ? 'var(--color-primary)' : 'var(--color-canvas)', border: `2px solid ${i === crumbs.length - 1 ? 'var(--color-primary)' : 'var(--color-hairline-soft)'}` }}
-                >
-                  {i === crumbs.length - 1 && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
-                </div>
-
-                {/* Text */}
-                <div className="py-3 md:py-0 md:mt-3 flex flex-col md:items-center">
-                  <span className="text-base font-bold devanagari" style={{ color: 'var(--color-ink)' }}>
-                    {crumb.label || '—'}
-                  </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider mt-0.5" style={{ color: 'var(--color-muted-soft)' }}>
-                    {crumb.sub}
-                  </span>
-                </div>
-              </div>
-
-              {/* Desktop Horizontal Line */}
-              {i < crumbs.length - 1 && (
-                <div className="hidden md:block w-12 lg:w-20 h-[2px] mt-[-24px] ml-4" style={{ background: 'var(--color-hairline)' }} />
-              )}
+      {/* Breadcrumb path */}
+      <div className="flex flex-wrap items-center gap-1">
+        {crumbs.map((crumb, i) => (
+          <div key={i} className="flex items-center gap-1">
+            <div className="flex flex-col items-center">
+              <span
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                style={
+                  i === crumbs.length - 1
+                    ? { background: '#fff7ed', color: 'var(--color-primary)', border: '1px solid #fed7aa' }
+                    : { background: 'var(--color-surface-soft)', color: 'var(--color-body)', border: '1px solid var(--color-hairline)' }
+                }
+              >
+                {crumb.label || '—'}
+              </span>
+              <span className="text-[10px] mt-0.5" style={{ color: 'var(--color-muted-soft)' }}>{crumb.sub}</span>
             </div>
-          ))}
-        </div>
+            {i < crumbs.length - 1 && (
+              <ChevronRight className="w-3 h-3 mt-[-10px]" style={{ color: 'var(--color-muted-soft)' }} />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export default function QuickSummaryCard({ data }: Props) {
           )}
         </div>
 
-        <p className="font-semibold text-sm devanagari leading-snug" style={{ color: t.label }}>
+        <p className="font-semibold text-lg md:text-xl devanagari leading-snug mt-1" style={{ color: t.label }}>
           {data.currentStatusClean || '—'}
         </p>
       </div>

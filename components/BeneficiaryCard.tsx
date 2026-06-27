@@ -48,77 +48,90 @@ export default function BeneficiaryCard({ data }: Props) {
   const s = SCHEME_COLORS[data.schemeType];
 
   return (
-    <div className="passbook-cover animate-fade-in-up mt-8">
+    <div className="passbook overflow-hidden animate-fade-in-up">
       {/* Scheme accent bar */}
-      <div style={{ height: '6px', background: s.accentBar }} />
+      <div style={{ height: '4px', background: s.accentBar }} />
 
-      <div className="p-6 md:p-8">
-        {/* Top row — avatar + name */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-          <div className="flex items-center gap-5">
-            {/* Avatar */}
-            <div
-              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-2xl md:text-3xl flex-shrink-0"
-              style={{
-                background: `linear-gradient(135deg, ${s.gradientFrom}, ${s.gradientTo})`,
-                boxShadow: `0 8px 24px ${s.gradientFrom}40`,
-              }}
+      {/* Passbook Header (White background) */}
+      <div className="passbook-header p-6">
+        {/* Top row — avatar + name + IDs */}
+        <div className="flex items-start gap-5">
+          {/* Avatar */}
+          <div
+            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white font-bold text-xl md:text-2xl flex-shrink-0"
+            style={{
+              background: `linear-gradient(135deg, ${s.gradientFrom}, ${s.gradientTo})`,
+              boxShadow: `0 4px 16px ${s.gradientFrom}40`,
+            }}
+          >
+            {getInitials(data.name)}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <h2
+              className="font-display text-2xl md:text-3xl"
+              style={{ color: 'var(--color-ink)' }}
             >
-              {getInitials(data.name)}
-            </div>
+              {data.name || '—'}
+            </h2>
+            <p className="text-sm mt-1 flex items-center gap-1.5" style={{ color: 'var(--color-muted)' }}>
+              <User className="w-3.5 h-3.5 flex-shrink-0" />
+              {data.fatherName ? `पिता/पति: ${data.fatherName}` : '—'}
+            </p>
 
-            <div className="flex-1 min-w-0 pt-1">
-              <h2
-                className="text-3xl md:text-4xl font-display text-ink"
-                style={{ color: 'var(--color-ink)' }}
+            {/* Scheme + district badges */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
+                style={{ background: s.badge.bg, color: s.badge.text, borderColor: s.badge.border }}
               >
-                {data.name || '—'}
-              </h2>
-              <p className="text-sm md:text-base mt-1 flex items-center gap-1.5" style={{ color: 'var(--color-muted)' }}>
-                <User className="w-4 h-4 flex-shrink-0" />
-                {data.fatherName ? `पिता/पति: ${data.fatherName}` : '—'}
-              </p>
-
-              {/* Scheme badge */}
-              <div className="mt-3">
-                <span
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border"
-                  style={{ background: s.badge.bg, color: s.badge.text, borderColor: s.badge.border }}
-                >
-                  {s.label} · {data.schemeName}
-                </span>
-              </div>
+                {s.label} · {data.schemeName}
+              </span>
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
+                style={{ background: 'var(--color-surface-soft)', color: 'var(--color-body)', border: '1px solid var(--color-hairline)' }}
+              >
+                <MapPin className="w-3 h-3" />
+                {data.district}
+              </span>
             </div>
           </div>
 
-          {/* Beneficiary ID — Passbook style stamp */}
-          <div className="flex flex-col md:items-end gap-1 mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 md:border-l w-full md:w-auto md:pl-6" style={{ borderColor: 'var(--color-hairline-soft)' }}>
-            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>लाभार्थी संख्या</p>
+          {/* Labharthi ID — desktop */}
+          <div className="hidden md:flex flex-col items-end gap-1 flex-shrink-0">
+            <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>लाभार्थी संख्या</p>
             <p
-              className="text-lg md:text-xl font-mono font-bold tracking-widest mt-1"
-              style={{ color: 'var(--color-ink)' }}
+              className="text-sm font-mono font-semibold px-3 py-1.5 rounded-lg tracking-wider"
+              style={{ background: '#fff7ed', color: 'var(--color-primary)', border: '1px solid #fed7aa' }}
             >
               {data.beneficiaryId || '—'}
             </p>
           </div>
         </div>
 
-        <div className="my-6" style={{ borderTop: '2px dashed var(--color-hairline-soft)' }} />
+        {/* Labharthi ID — mobile */}
+        <div className="md:hidden mt-4 flex items-center gap-2 p-3 rounded-xl"
+          style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
+          <p className="text-xs" style={{ color: 'var(--color-muted)' }}>लाभार्थी संख्या:</p>
+          <p className="text-sm font-mono font-semibold tracking-wider" style={{ color: 'var(--color-primary)' }}>{data.beneficiaryId || '—'}</p>
+        </div>
+
+        <div className="my-5" style={{ borderTop: '1px solid var(--color-hairline-soft)' }} />
 
         {/* Detail grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
           {[
-            { icon: <Calendar className="w-4 h-4" />,   label: 'जन्म तिथि / DOB',      value: data.dob || '—' },
-            { icon: <CreditCard className="w-4 h-4" />, label: 'खाता नंबर / Account',  value: data.accountNo || '—' },
-            { icon: <Hash className="w-4 h-4" />,       label: 'SSPMIS ID',             value: data.sspmisId || '—' },
-            { icon: <Fingerprint className="w-4 h-4" />,label: 'आधार DOB',              value: data.dobAadhaar || '—' },
+            { icon: <Calendar className="w-3.5 h-3.5" />,   label: 'जन्म तिथि / DOB',      value: data.dob || '—' },
+            { icon: <CreditCard className="w-3.5 h-3.5" />, label: 'खाता नंबर / Account',  value: data.accountNo || '—' },
+            { icon: <Hash className="w-3.5 h-3.5" />,       label: 'SSPMIS ID',             value: data.sspmisId || '—' },
+            { icon: <Fingerprint className="w-3.5 h-3.5" />,label: 'आधार DOB',              value: data.dobAadhaar || '—' },
           ].map((row, i) => (
-            <div key={i} className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--color-muted)' }}>
+            <div key={i} className="flex flex-col gap-1">
+              <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--color-muted)' }}>
                 {row.icon}
                 {row.label}
               </div>
-              <p className="text-sm font-mono font-medium truncate" style={{ color: 'var(--color-ink)' }} title={row.value}>{row.value}</p>
+              <p className="text-sm font-mono truncate" style={{ color: 'var(--color-body)' }} title={row.value}>{row.value}</p>
             </div>
           ))}
         </div>
@@ -126,14 +139,12 @@ export default function BeneficiaryCard({ data }: Props) {
         {/* Aadhaar no if available */}
         {data.aadhaarNo && (
           <div
-            className="mt-6 flex items-center justify-between p-4 rounded-xl border border-dashed"
-            style={{ background: 'var(--color-canvas)', borderColor: 'var(--color-hairline)' }}
+            className="mt-4 flex items-center gap-2 p-3 rounded-xl"
+            style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-hairline)' }}
           >
-            <div className="flex items-center gap-2">
-              <BadgeInfo className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--color-muted)' }} />
-              <p className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--color-muted)' }}>आधार नंबर (Aadhaar):</p>
-            </div>
-            <p className="text-base font-mono font-bold tracking-widest" style={{ color: 'var(--color-ink)' }}>{data.aadhaarNo}</p>
+            <BadgeInfo className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--color-muted)' }} />
+            <p className="text-xs" style={{ color: 'var(--color-muted)' }}>आधार नंबर:</p>
+            <p className="text-sm font-mono tracking-widest" style={{ color: 'var(--color-body)' }}>{data.aadhaarNo}</p>
           </div>
         )}
       </div>
