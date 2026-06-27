@@ -68,6 +68,25 @@ test-scrape.js
 # Scratch/utility scripts generated during development
 /scratch/
 
-# AI assistant working files
+# ─── AI Dev & Design Tooling ──────────────────────────────────────────────────
+
+# AI assistant instruction/config files
 CLAUDE.md
 AGENTS.md
+.gemini/
+.cursorrules
+.cursorignore
+copilot-instructions.md
+.github/copilot-instructions.md
+
+# Agent skills & config (Antigravity, Cursor, Amp, etc.)
+.agents/
+skills-lock.json
+
+# Design reference files (getdesign / DESIGN.md tooling)
+DESIGN.md
+/claude/
+
+# AI working memory / brain dumps
+*.brain.md
+*.thoughts.md

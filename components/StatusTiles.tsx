@@ -8,43 +8,53 @@ import type { BadgeType, PensionData } from '@/lib/types';
 
 interface Props { data: PensionData }
 
+const BADGE_CFG: Record<BadgeType, {
+  bg: string; border: string; iconBg: string;
+  textColor: string; label: string; labelHi: string;
+  dotColor: string;
+  icon: React.ReactNode;
+}> = {
+  success: {
+    bg: '#f0fdf4', border: '#bbf7d0', iconBg: '#dcfce7', textColor: '#15803d',
+    label: 'Verified / Active', labelHi: 'सत्यापित / सक्रिय', dotColor: '#22c55e',
+    icon: <CheckCircle2 className="w-5 h-5" style={{ color: '#16a34a' }} strokeWidth={1.8} />,
+  },
+  warning: {
+    bg: '#fffbeb', border: '#fde68a', iconBg: '#fef9c3', textColor: '#92400e',
+    label: 'Processing', labelHi: 'प्रक्रिया में है', dotColor: '#f59e0b',
+    icon: <Clock className="w-5 h-5" style={{ color: '#d97706' }} strokeWidth={1.8} />,
+  },
+  danger: {
+    bg: '#fef2f2', border: '#fca5a5', iconBg: '#fee2e2', textColor: '#991b1b',
+    label: 'Not Verified', labelHi: 'सत्यापित नहीं', dotColor: '#ef4444',
+    icon: <XCircle className="w-5 h-5" style={{ color: '#dc2626' }} strokeWidth={1.8} />,
+  },
+  locked: {
+    bg: '#faf5ff', border: '#d8b4fe', iconBg: '#ede9fe', textColor: '#5b21b6',
+    label: 'Locked', labelHi: 'लॉक किया गया', dotColor: '#8b5cf6',
+    icon: <Lock className="w-5 h-5" style={{ color: '#7c3aed' }} strokeWidth={1.8} />,
+  },
+  info: {
+    bg: '#f0f9ff', border: '#bae6fd', iconBg: '#e0f2fe', textColor: '#0369a1',
+    label: 'Info', labelHi: 'जानकारी', dotColor: '#0ea5e9',
+    icon: <HelpCircle className="w-5 h-5" style={{ color: '#0284c7' }} strokeWidth={1.8} />,
+  },
+  neutral: {
+    bg: 'var(--color-surface-soft)', border: 'var(--color-hairline)', iconBg: 'var(--color-surface-card)',
+    textColor: 'var(--color-muted)', label: 'Unknown', labelHi: 'अज्ञात', dotColor: 'var(--color-muted)',
+    icon: <HelpCircle className="w-5 h-5" style={{ color: 'var(--color-muted-soft)' }} strokeWidth={1.8} />,
+  },
+};
+
 function StatusDot({ type }: { type: BadgeType }) {
-  const colors: Record<BadgeType, string> = {
-    success: 'bg-emerald-400', warning: 'bg-amber-400',
-    danger:  'bg-red-400',     locked:  'bg-violet-400',
-    info:    'bg-sky-400',     neutral: 'bg-slate-500',
-  };
+  const cfg = BADGE_CFG[type];
   return (
     <span className="relative flex w-2.5 h-2.5 flex-shrink-0">
-      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${colors[type]} opacity-40`} />
-      <span className={`relative inline-flex rounded-full w-2.5 h-2.5 ${colors[type]}`} />
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-40" style={{ background: cfg.dotColor }} />
+      <span className="relative inline-flex rounded-full w-2.5 h-2.5" style={{ background: cfg.dotColor }} />
     </span>
   );
 }
-
-const BADGE_CONFIG: Record<BadgeType, {
-  bg: string; border: string; text: string; icon: React.ReactNode;
-  label: string; labelHi: string;
-}> = {
-  success: { bg: 'bg-emerald-100', border: 'border-emerald-200', text: 'text-emerald-700',
-    icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" strokeWidth={1.8} />,
-    label: 'Verified / Active', labelHi: 'सत्यापित / सक्रिय' },
-  warning: { bg: 'bg-amber-100', border: 'border-amber-200', text: 'text-amber-700',
-    icon: <Clock className="w-5 h-5 text-amber-600" strokeWidth={1.8} />,
-    label: 'Processing', labelHi: 'प्रक्रिया में है' },
-  danger:  { bg: 'bg-red-100', border: 'border-red-200', text: 'text-red-700',
-    icon: <XCircle className="w-5 h-5 text-red-600" strokeWidth={1.8} />,
-    label: 'Not Verified', labelHi: 'सत्यापित नहीं' },
-  locked:  { bg: 'bg-violet-100', border: 'border-violet-200', text: 'text-violet-700',
-    icon: <Lock className="w-5 h-5 text-violet-600" strokeWidth={1.8} />,
-    label: 'Locked', labelHi: 'लॉक किया गया' },
-  info:    { bg: 'bg-sky-100', border: 'border-sky-200', text: 'text-sky-700',
-    icon: <HelpCircle className="w-5 h-5 text-sky-600" strokeWidth={1.8} />,
-    label: 'Info', labelHi: 'जानकारी' },
-  neutral: { bg: 'bg-slate-100', border: 'border-slate-200', text: 'text-slate-600',
-    icon: <HelpCircle className="w-5 h-5 text-slate-500" strokeWidth={1.8} />,
-    label: 'Unknown', labelHi: 'अज्ञात' },
-};
 
 function StatusCard({
   icon, titleHi, titleEn, statusHi, badge, lastUpdate, delay, extra,
@@ -58,39 +68,52 @@ function StatusCard({
   delay?: string;
   extra?: React.ReactNode;
 }) {
-  const cfg = BADGE_CONFIG[badge];
+  const cfg = BADGE_CFG[badge];
 
   return (
     <div
-      className={`${cfg.bg} border ${cfg.border} rounded-2xl p-5 flex flex-col gap-4 animate-fade-in-up`}
-      style={{ animationDelay: delay }}
+      className="rounded-2xl p-5 flex flex-col gap-4 animate-fade-in-up"
+      style={{
+        background: cfg.bg,
+        border: `1px solid ${cfg.border}`,
+        boxShadow: 'var(--shadow-card)',
+        animationDelay: delay,
+      }}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className={`w-11 h-11 rounded-xl ${cfg.bg} border ${cfg.border} flex items-center justify-center flex-shrink-0`}>
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: cfg.iconBg, border: `1px solid ${cfg.border}` }}
+          >
             {icon}
           </div>
-          {/* Title */}
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider leading-none mb-1">{titleEn}</p>
-            <h3 className="text-sm font-semibold text-slate-800 devanagari leading-none">{titleHi}</h3>
+            <p className="text-xs uppercase tracking-wider leading-none mb-1" style={{ color: 'var(--color-muted-soft)' }}>{titleEn}</p>
+            <h3 className="text-sm font-semibold devanagari leading-snug" style={{ color: 'var(--color-ink)' }}>{titleHi}</h3>
           </div>
         </div>
         <StatusDot type={badge} />
       </div>
 
       {/* Badge label */}
-      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border self-start ${cfg.bg} ${cfg.border} ${cfg.text}`}>
+      <div
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border self-start"
+        style={{ background: cfg.bg, borderColor: cfg.border, color: cfg.textColor }}
+      >
         {cfg.icon}
         <span className="devanagari">{cfg.labelHi}</span>
       </div>
 
-      {/* Status text — full, readable */}
+      {/* Status text */}
       {statusHi && (
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-slate-500 uppercase tracking-wider">स्थिति विवरण / Status Detail</p>
-          <p className="text-sm text-slate-800 devanagari leading-relaxed bg-slate-100 rounded-xl px-3 py-2.5 border border-slate-900/5">
+          <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>स्थिति विवरण / Status Detail</p>
+          <p
+            className="text-sm devanagari leading-relaxed px-3 py-2.5 rounded-xl"
+            style={{ background: 'var(--color-canvas)', color: 'var(--color-body)', border: '1px solid rgba(0,0,0,0.04)' }}
+          >
             {statusHi}
           </p>
         </div>
@@ -98,9 +121,9 @@ function StatusCard({
 
       {/* Last updated */}
       {lastUpdate && (
-        <div className="flex items-center gap-1.5 text-xs text-slate-500 border-t border-slate-900/5 pt-3">
+        <div className="flex items-center gap-1.5 text-xs pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.05)', color: 'var(--color-muted)' }}>
           <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>अंतिम अपडेट: <span className="text-slate-500 font-medium">{lastUpdate}</span></span>
+          <span>अंतिम अपडेट: <span className="font-medium">{lastUpdate}</span></span>
         </div>
       )}
 
@@ -113,7 +136,7 @@ export default function StatusTiles({ data }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <StatusCard
-        icon={<ShieldCheck className="w-5 h-5 text-orange-400" />}
+        icon={<ShieldCheck className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />}
         titleHi="पेंशन स्थिति"
         titleEn="Pension Status"
         statusHi={data.currentStatusClean}
@@ -122,7 +145,7 @@ export default function StatusTiles({ data }: Props) {
         delay="0ms"
       />
       <StatusCard
-        icon={<Fingerprint className="w-5 h-5 text-emerald-400" />}
+        icon={<Fingerprint className="w-5 h-5" style={{ color: '#059669' }} />}
         titleHi="जीवन प्रमाण / eKYC"
         titleEn="Jeevan Praman Status"
         statusHi={data.jpStatusClean}
@@ -131,15 +154,15 @@ export default function StatusTiles({ data }: Props) {
         delay="80ms"
         extra={
           data.jpLastDate ? (
-            <div className="flex flex-col gap-0.5 border-t border-slate-900/5 pt-3">
-              <p className="text-xs text-slate-500">प्रमाणीकरण तिथि / Auth Date</p>
-              <p className="text-sm font-semibold text-emerald-800 font-mono">{data.jpLastDate}</p>
+            <div className="flex flex-col gap-0.5 pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>प्रमाणीकरण तिथि / Auth Date</p>
+              <p className="text-sm font-semibold font-mono" style={{ color: '#15803d' }}>{data.jpLastDate}</p>
             </div>
           ) : undefined
         }
       />
       <StatusCard
-        icon={<Link2 className="w-5 h-5 text-sky-500" />}
+        icon={<Link2 className="w-5 h-5" style={{ color: '#0284c7' }} />}
         titleHi="आधार सीडिंग"
         titleEn="Aadhaar Seeding Status"
         statusHi={data.aadhaarSeedingStatus}
