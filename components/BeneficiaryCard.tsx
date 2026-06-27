@@ -48,17 +48,19 @@ export default function BeneficiaryCard({ data }: Props) {
   const s = SCHEME_COLORS[data.schemeType];
 
   return (
-    <div className="passbook overflow-hidden animate-fade-in-up">
+    <div
+      className="rounded-2xl overflow-hidden animate-fade-in-up"
+      style={{ background: 'var(--color-canvas)', border: '1px solid var(--color-hairline)', boxShadow: 'var(--shadow-card)' }}
+    >
       {/* Scheme accent bar */}
-      <div style={{ height: '4px', background: s.accentBar }} />
+      <div style={{ height: '3px', background: s.accentBar }} />
 
-      {/* Passbook Header (White background) */}
-      <div className="passbook-header p-6">
+      <div className="p-6 md:p-8">
         {/* Top row — avatar + name + IDs */}
         <div className="flex items-start gap-5">
           {/* Avatar */}
           <div
-            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white font-bold text-xl md:text-2xl flex-shrink-0"
+            className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-white font-bold text-xl md:text-2xl flex-shrink-0"
             style={{
               background: `linear-gradient(135deg, ${s.gradientFrom}, ${s.gradientTo})`,
               boxShadow: `0 4px 16px ${s.gradientFrom}40`,
@@ -69,8 +71,8 @@ export default function BeneficiaryCard({ data }: Props) {
 
           <div className="flex-1 min-w-0">
             <h2
-              className="font-display text-2xl md:text-3xl"
-              style={{ color: 'var(--color-ink)' }}
+              className="text-xl md:text-2xl font-bold tracking-wide"
+              style={{ color: 'var(--color-ink)', fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               {data.name || '—'}
             </h2>

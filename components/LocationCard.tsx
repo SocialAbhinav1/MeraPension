@@ -16,8 +16,11 @@ export default function LocationCard({ data }: Props) {
 
   return (
     <div
-      className="passbook p-5 animate-fade-in-up"
+      className="rounded-2xl p-5 animate-fade-in-up"
       style={{
+        background: 'var(--color-canvas)',
+        border: '1px solid var(--color-hairline)',
+        boxShadow: 'var(--shadow-card)',
         animationDelay: '280ms',
       }}
     >

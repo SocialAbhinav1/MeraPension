@@ -8,8 +8,10 @@
 
 import {
   PAYMENT_URL,
+  SEEDING_URL,
   fetchViewStateTokens,
   parsePaymentStatusHtml,
+  parseSeedingHtml,
 } from '@/lib/scraper';
 import type { PensionData, SearchFormValues } from '@/lib/types';
 
@@ -36,7 +38,36 @@ function getFinYearValue(fy: string): string {
   return '0';
 }
 
+// ─── Aadhaar seeding (fully server-side) ─────────────────────────────────────
+async function fetchSeedingData(searchType: string, sanitized: string) {
+  try {
+    const tokens = await fetchViewStateTokens(SEEDING_URL);
+    const formData = new URLSearchParams();
+    formData.set('__VIEWSTATE', tokens.viewState);
+    formData.set('__VIEWSTATEGENERATOR', tokens.viewStateGenerator);
+    formData.set('__EVENTVALIDATION', tokens.eventValidation);
+    Object.entries(tokens.hiddenInputs).forEach(([k, v]) => formData.set(k, v));
+    formData.set('ctl00$ContentPlaceHolder1$ddlSearchBy', SEEDING_TYPE_MAP[searchType] ?? '2');
+    formData.set('ctl00$ContentPlaceHolder1$txtSearchBy', sanitized);
+    formData.set('ctl00$ContentPlaceHolder1$btnView', 'View');
 
+    const resp = await fetch(SEEDING_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Referer: SEEDING_URL,
+        Origin: 'https://elabharthi.bihar.gov.in',
+        ...(tokens.cookie ? { Cookie: tokens.cookie } : {}),
+      },
+      body: formData.toString(),
+    });
+    if (!resp.ok) return null;
+    return parseSeedingHtml(await resp.text());
+  } catch {
+    return null;
+  }
+}
 
 // ─── Main Server Action ───────────────────────────────────────────────────────
 export type SearchResult =
@@ -98,7 +129,16 @@ export async function searchPensionAction(
       };
     }
 
-
+    // 4. Merge seeding data server-side
+    const seeding = await fetchSeedingData(searchType, sanitized);
+    if (seeding) {
+      data.aadhaarSeedingStatus = seeding.status;
+      data.aadhaarSeedingBadge  = seeding.statusBadge;
+      if (seeding.aadhaarNo) data.aadhaarNo = seeding.aadhaarNo;
+    } else {
+      data.aadhaarSeedingStatus = 'अज्ञात (Unknown)';
+      data.aadhaarSeedingBadge  = 'neutral';
+    }
 
     // 5. Strip raw portal internals before returning to client
     const {

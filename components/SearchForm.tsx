@@ -62,11 +62,15 @@ export default function SearchForm({ onSearch, isLoading }: Props) {
 
   return (
     <div
-      className={`relative overflow-hidden transition-all duration-500 ${isReady ? 'passbook border-orange-500' : 'passbook'}`}
+      className="rounded-2xl overflow-hidden transition-all duration-500"
       style={{
+        background: 'var(--color-canvas)',
+        border: isReady
+          ? '1.5px solid var(--color-primary)'
+          : '1.5px solid var(--color-hairline)',
         boxShadow: isReady
-          ? '0 12px 32px rgba(232,114,12,0.12), 0 4px 12px rgba(232,114,12,0.06)'
-          : 'var(--shadow-raised)',
+          ? '0 4px 24px rgba(249,115,22,0.18), 0 1px 4px rgba(249,115,22,0.08)'
+          : 'var(--shadow-card)',
       }}
     >
       {/* Accent bar */}

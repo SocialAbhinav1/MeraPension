@@ -71,9 +71,22 @@ export interface PensionData {
 
   // Full payment history (Table 2)
   paymentHistory: PaymentRecord[];
+
+  // Aadhaar Seeding (merged from second API call)
+  aadhaarSeedingStatus: string;
+  aadhaarSeedingBadge: BadgeType;
 }
 
-
+export interface SeedingData {
+  beneficiaryId: string;
+  name: string;
+  aadhaarNo: string;
+  district: string;
+  block: string;
+  panchayat: string;
+  status: string;
+  statusBadge: BadgeType;
+}
 
 export interface ApiResponse<T> {
   success: boolean;

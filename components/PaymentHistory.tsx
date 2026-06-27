@@ -125,8 +125,9 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
             {records.map((r, i) => (
               <tr
                 key={i}
-                className="passbook-row transition-colors animate-fade-in-up"
+                className="transition-colors animate-fade-in-up"
                 style={{
+                  borderBottom: '1px solid var(--color-hairline-soft)',
                   animationDelay: `${i * 40}ms`,
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-soft)')}
@@ -217,9 +218,20 @@ export default function PaymentHistory({ data, financialYear }: Props) {
   const hasMonths = data.paymentMonths.length > 0;
 
   return (
-    <div className="passbook overflow-hidden animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+    <div
+      className="rounded-2xl overflow-hidden animate-fade-in-up"
+      style={{
+        background: 'var(--color-canvas)',
+        border: '1px solid var(--color-hairline)',
+        boxShadow: 'var(--shadow-card)',
+        animationDelay: '200ms',
+      }}
+    >
       {/* Header */}
-      <div className="passbook-header flex items-center justify-between px-6 py-4">
+      <div
+        className="flex items-center justify-between px-6 py-4"
+        style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}
+      >
         <div className="flex items-center gap-3">
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center"

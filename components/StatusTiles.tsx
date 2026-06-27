@@ -134,7 +134,7 @@ function StatusCard({
 
 export default function StatusTiles({ data }: Props) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <StatusCard
         icon={<ShieldCheck className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />}
         titleHi="पेंशन स्थिति"
@@ -161,7 +161,14 @@ export default function StatusTiles({ data }: Props) {
           ) : undefined
         }
       />
-
+      <StatusCard
+        icon={<Link2 className="w-5 h-5" style={{ color: '#0284c7' }} />}
+        titleHi="आधार सीडिंग"
+        titleEn="Aadhaar Seeding Status"
+        statusHi={data.aadhaarSeedingStatus}
+        badge={data.aadhaarSeedingBadge}
+        delay="160ms"
+      />
     </div>
   );
 }
