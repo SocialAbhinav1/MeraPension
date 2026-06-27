@@ -113,7 +113,7 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
         <table className="w-full min-w-[700px]">
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
-              {['माह/Month', 'स्थिति/Status', 'राशि/Amount', 'UTR No.', 'खाता/Account', 'बैंक/Bank'].map((h) => (
+              {['माह/Month', 'स्थिति/Status', 'राशि/Amount', 'UTR / भुगतान तिथि', 'खाता/Account', 'बैंक/Bank'].map((h) => (
                 <th key={h} className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap"
                   style={{ color: 'var(--color-muted)' }}>
                   {h}
@@ -168,9 +168,19 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
                     {r.amount ? `₹${r.amount}` : '—'}
                   </span>
                 </td>
-                {/* UTR */}
+                {/* UTR & Payment Date */}
                 <td className="py-3 px-4">
-                  <span className="text-xs font-mono select-all" style={{ color: 'var(--color-muted)' }}>{r.utrNo || '—'}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-mono select-all font-semibold" style={{ color: 'var(--color-body)' }}>
+                      {r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}
+                    </span>
+                    {r.paymentDate && (
+                      <div className="flex flex-col gap-0.5 mt-0.5">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--color-muted-soft)' }}>भुगतान तिथि / Date</span>
+                        <span className="text-xs font-mono" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                      </div>
+                    )}
+                  </div>
                 </td>
                 {/* Account */}
                 <td className="py-3 px-4">

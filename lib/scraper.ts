@@ -290,6 +290,16 @@ function parsePaymentHistoryTable($: cheerio.CheerioAPI, allTables: cheerio.Chee
       if (!srNo) return;
 
       const status = cell(11);
+      
+      const rawUtr = cell(9);
+      let utrNo = rawUtr;
+      let paymentDate = '';
+      if (rawUtr.includes(', Dated on:')) {
+        const parts = rawUtr.split(', Dated on:');
+        utrNo = parts[0].trim();
+        paymentDate = parts[1].trim();
+      }
+
       records.push({
         srNo,
         financialYear: cell(1),
@@ -300,7 +310,8 @@ function parsePaymentHistoryTable($: cheerio.CheerioAPI, allTables: cheerio.Chee
         fatherName: cell(6),
         fromMonth: cell(7),
         toMonth: cell(8),
-        utrNo: cell(9),
+        utrNo,
+        paymentDate,
         amount: cell(10),
         status,
         statusBadge: normalizeStatus(status),

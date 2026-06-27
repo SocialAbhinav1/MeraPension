@@ -19,6 +19,7 @@ export interface PaymentRecord {
   fromMonth: string;
   toMonth: string;
   utrNo: string;
+  paymentDate?: string;
   amount: string;
   status: string;
   statusBadge: BadgeType;
