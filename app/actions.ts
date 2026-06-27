@@ -132,18 +132,18 @@ export async function searchPensionAction(
     // 4. Merge seeding data server-side
     const seeding = await fetchSeedingData(searchType, sanitized);
     if (seeding) {
+      data.aadhaarSeedingStatusRaw = seeding.statusRaw;
       data.aadhaarSeedingStatus = seeding.status;
-      data.aadhaarSeedingBadge  = seeding.statusBadge;
+      data.aadhaarSeedingBadge = seeding.statusBadge;
       if (seeding.aadhaarNo) data.aadhaarNo = seeding.aadhaarNo;
     } else {
+      data.aadhaarSeedingStatusRaw = '';
       data.aadhaarSeedingStatus = 'अज्ञात (Unknown)';
-      data.aadhaarSeedingBadge  = 'neutral';
+      data.aadhaarSeedingBadge = 'neutral';
     }
 
     // 5. Strip raw portal internals before returning to client
     const {
-      currentStatus:    _cs,
-      jpStatus:         _jp,
       paymentStatusRaw: _pr,
       ...clientData
     } = data;

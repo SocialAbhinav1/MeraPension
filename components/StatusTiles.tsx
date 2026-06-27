@@ -57,12 +57,13 @@ function StatusDot({ type }: { type: BadgeType }) {
 }
 
 function StatusCard({
-  icon, titleHi, titleEn, statusHi, badge, lastUpdate, delay, extra,
+  icon, titleHi, titleEn, statusClean, statusRaw, badge, lastUpdate, delay, extra,
 }: {
   icon: React.ReactNode;
   titleHi: string;
   titleEn: string;
-  statusHi: string;
+  statusClean: string;
+  statusRaw?: string;
   badge: BadgeType;
   lastUpdate?: string;
   delay?: string;
@@ -72,7 +73,7 @@ function StatusCard({
 
   return (
     <div
-      className="rounded-2xl p-5 flex flex-col gap-4 animate-fade-in-up"
+      className="rounded-2xl p-5 flex flex-col gap-4 animate-fade-in-up transition-all duration-300 hover:shadow-lg"
       style={{
         background: cfg.bg,
         border: `1px solid ${cfg.border}`,
@@ -84,46 +85,77 @@ function StatusCard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+            className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
             style={{ background: cfg.iconBg, border: `1px solid ${cfg.border}` }}
           >
             {icon}
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider leading-none mb-1" style={{ color: 'var(--color-muted-soft)' }}>{titleEn}</p>
-            <h3 className="text-sm font-semibold devanagari leading-snug" style={{ color: 'var(--color-ink)' }}>{titleHi}</h3>
+            <p className="text-xs uppercase tracking-wider leading-none mb-1 font-semibold" style={{ color: 'var(--color-muted-soft)' }}>{titleEn}</p>
+            <h3 className="text-sm font-bold devanagari leading-snug" style={{ color: 'var(--color-ink)' }}>{titleHi}</h3>
           </div>
         </div>
         <StatusDot type={badge} />
       </div>
 
-      {/* Badge label */}
+      {/* Badge label - using the short title from translation if available, otherwise fallback to generic label */}
       <div
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border self-start"
-        style={{ background: cfg.bg, borderColor: cfg.border, color: cfg.textColor }}
+        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold border self-start shadow-sm"
+        style={{ background: '#fff', borderColor: cfg.border, color: cfg.textColor }}
       >
         {cfg.icon}
-        <span className="devanagari">{cfg.labelHi}</span>
+        <span className="devanagari">{statusClean ? statusClean.split(' — ')[0] : cfg.labelHi}</span>
       </div>
 
-      {/* Status text */}
-      {statusHi && (
-        <div className="flex flex-col gap-1">
-          <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>स्थिति विवरण / Status Detail</p>
-          <p
-            className="text-sm devanagari leading-relaxed px-3 py-2.5 rounded-xl"
-            style={{ background: 'var(--color-canvas)', color: 'var(--color-body)', border: '1px solid rgba(0,0,0,0.04)' }}
-          >
-            {statusHi}
-          </p>
+      {/* Status text boxes */}
+      {statusClean && (
+        <div className="flex flex-col gap-3 mt-1">
+          {(() => {
+            const parts = statusClean.split(' — ');
+            const desc = parts[1];
+            
+            return (
+              <>
+                {/* Official Text section */}
+                {statusRaw && statusRaw !== '—' && (
+                  <div className="flex flex-col gap-1.5">
+                    <p className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>
+                      पोर्टल विवरण (Official Text)
+                    </p>
+                    <p
+                      className="text-xs devanagari leading-relaxed px-3 py-2.5 rounded-xl border border-dashed select-all"
+                      style={{ background: 'var(--color-canvas)', color: 'var(--color-muted)', borderColor: 'var(--color-hairline)' }}
+                    >
+                      {statusRaw}
+                    </p>
+                  </div>
+                )}
+                
+                {/* Our Explanation section */}
+                {desc && (
+                  <div className="flex flex-col gap-1.5 mt-1">
+                    <p className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>
+                      अर्थ / Meaning
+                    </p>
+                    <p
+                      className="text-sm devanagari leading-relaxed px-3.5 py-3 rounded-xl font-medium shadow-sm"
+                      style={{ background: '#fff', color: 'var(--color-ink)', border: `1px solid ${cfg.border}` }}
+                    >
+                      {desc}
+                    </p>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
       {/* Last updated */}
       {lastUpdate && (
-        <div className="flex items-center gap-1.5 text-xs pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.05)', color: 'var(--color-muted)' }}>
+        <div className="flex items-center gap-1.5 text-xs pt-3 mt-auto font-medium" style={{ borderTop: '1px solid rgba(0,0,0,0.05)', color: 'var(--color-muted)' }}>
           <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>अंतिम अपडेट: <span className="font-medium">{lastUpdate}</span></span>
+          <span>अंतिम अपडेट: <span className="font-semibold text-black/70">{lastUpdate}</span></span>
         </div>
       )}
 
@@ -139,7 +171,8 @@ export default function StatusTiles({ data }: Props) {
         icon={<ShieldCheck className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />}
         titleHi="पेंशन स्थिति"
         titleEn="Pension Status"
-        statusHi={data.currentStatusClean}
+        statusClean={data.currentStatusClean}
+        statusRaw={data.currentStatus}
         badge={data.currentStatusBadge}
         lastUpdate={data.currentStatusLastUpdate}
         delay="0ms"
@@ -148,15 +181,16 @@ export default function StatusTiles({ data }: Props) {
         icon={<Fingerprint className="w-5 h-5" style={{ color: '#059669' }} />}
         titleHi="जीवन प्रमाण / eKYC"
         titleEn="Jeevan Praman Status"
-        statusHi={data.jpStatusClean}
+        statusClean={data.jpStatusClean}
+        statusRaw={data.jpStatus}
         badge={data.jpStatusBadge}
         lastUpdate={data.jpStatusLastUpdate}
         delay="80ms"
         extra={
           data.jpLastDate ? (
-            <div className="flex flex-col gap-0.5 pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>प्रमाणीकरण तिथि / Auth Date</p>
-              <p className="text-sm font-semibold font-mono" style={{ color: '#15803d' }}>{data.jpLastDate}</p>
+            <div className="flex flex-col gap-1 pt-3 font-medium" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+              <p className="text-xs tracking-wide" style={{ color: 'var(--color-muted)' }}>प्रमाणीकरण तिथि / Auth Date</p>
+              <p className="text-sm font-bold font-mono" style={{ color: '#15803d' }}>{data.jpLastDate}</p>
             </div>
           ) : undefined
         }
@@ -165,7 +199,8 @@ export default function StatusTiles({ data }: Props) {
         icon={<Link2 className="w-5 h-5" style={{ color: '#0284c7' }} />}
         titleHi="आधार सीडिंग"
         titleEn="Aadhaar Seeding Status"
-        statusHi={data.aadhaarSeedingStatus}
+        statusClean={data.aadhaarSeedingStatus}
+        statusRaw={data.aadhaarSeedingStatusRaw}
         badge={data.aadhaarSeedingBadge}
         delay="160ms"
       />

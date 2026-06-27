@@ -518,6 +518,7 @@ export function parseSeedingHtml(html: string): SeedingData | null {
     district: cell(4),
     block: cell(5),
     panchayat: cell(6),
+    statusRaw: status,
     status: translateStatus(status),
     statusBadge: normalizeStatus(status),
   };

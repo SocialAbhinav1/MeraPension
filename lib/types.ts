@@ -74,6 +74,7 @@ export interface PensionData {
   paymentHistory: PaymentRecord[];
 
   // Aadhaar Seeding (merged from second API call)
+  aadhaarSeedingStatusRaw?: string;
   aadhaarSeedingStatus: string;
   aadhaarSeedingBadge: BadgeType;
 }
@@ -85,6 +86,7 @@ export interface SeedingData {
   district: string;
   block: string;
   panchayat: string;
+  statusRaw: string;
   status: string;
   statusBadge: BadgeType;
 }
