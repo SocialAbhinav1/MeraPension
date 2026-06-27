@@ -1,37 +1,12 @@
 'use client';
 
-import { Banknote, CheckCircle2, Clock, XCircle, HelpCircle, Calendar, CreditCard } from 'lucide-react';
+import { Banknote, CheckCircle2, Clock, XCircle, HelpCircle, Calendar, Landmark } from 'lucide-react';
 import type { BadgeType, PaymentMonth, PaymentRecord, PensionData } from '@/lib/types';
 
 interface Props {
   data: PensionData;
   financialYear: string;
 }
-
-function PayStatusIcon({ type }: { type: BadgeType }) {
-  if (type === 'success') return <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: '#16a34a' }} />;
-  if (type === 'warning') return <Clock className="w-4 h-4 flex-shrink-0" style={{ color: '#d97706' }} />;
-  if (type === 'danger')  return <XCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#dc2626' }} />;
-  return <HelpCircle className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }} />;
-}
-
-const BADGE_CLASS: Record<BadgeType, string> = {
-  success: 'badge-success',
-  warning: 'badge-warning',
-  danger:  'badge-danger',
-  locked:  'badge-locked',
-  info:    'badge-info',
-  neutral: 'badge-neutral',
-};
-
-const PILL_STYLE: Record<BadgeType, { bg: string; border: string; text: string }> = {
-  success: { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d' },
-  warning: { bg: '#fffbeb', border: '#fde68a', text: '#92400e' },
-  danger:  { bg: '#fef2f2', border: '#fca5a5', text: '#991b1b' },
-  locked:  { bg: '#faf5ff', border: '#d8b4fe', text: '#5b21b6' },
-  info:    { bg: '#f0f9ff', border: '#bae6fd', text: '#0369a1' },
-  neutral: { bg: 'var(--color-surface-soft)', border: 'var(--color-hairline)', text: 'var(--color-muted)' },
-};
 
 const HINDI_MONTHS: Record<string, string> = {
   jan: 'जनवरी', january: 'जनवरी', 'जनवरी': 'जनवरी',
@@ -60,134 +35,82 @@ function formatMonth(val: string): string {
   return val;
 }
 
-// ─── Summary strip ──────────────────────────────────────────────────────────
-function SummaryStrip({ months, lastUpdate }: { months: PaymentMonth[]; lastUpdate: string }) {
-  if (months.length === 0) return null;
-  return (
-    <div className="flex flex-col gap-3 px-6 py-5" style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}>
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <p className="text-sm font-bold tracking-wide" style={{ color: 'var(--color-ink)' }}>
-          अंतिम भुगतान की स्थिति
-          <span className="font-normal ml-1 text-xs" style={{ color: 'var(--color-muted)' }}>/ Recent Payment Summary</span>
-        </p>
-        {lastUpdate && (
-          <span className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--color-muted)' }}>
-            <Calendar className="w-3.5 h-3.5" style={{ color: 'var(--color-muted-soft)' }} />
-            अंतिम अपडेट: <span className="font-semibold ml-0.5" style={{ color: 'var(--color-body)' }}>{lastUpdate}</span>
-          </span>
-        )}
-      </div>
-      <div className="flex flex-wrap gap-2.5">
-        {months.map((pm, i) => {
-          const ps = PILL_STYLE[pm.badgeType];
-          return (
-            <div
-              key={i}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium"
-              style={{ background: ps.bg, borderColor: ps.border, color: ps.text }}
-            >
-              <PayStatusIcon type={pm.badgeType} />
-              <div>
-                <span className="font-bold devanagari">{pm.month}</span>
-                <span className="text-xs ml-2 devanagari opacity-80">{pm.status}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+function PayStatusIcon({ type, className }: { type: BadgeType, className?: string }) {
+  if (type === 'success') return <CheckCircle2 className={className} style={{ color: '#16a34a' }} />;
+  if (type === 'warning') return <Clock className={className} style={{ color: '#d97706' }} />;
+  if (type === 'danger')  return <XCircle className={className} style={{ color: '#dc2626' }} />;
+  return <HelpCircle className={className} style={{ color: 'var(--color-muted-soft)' }} />;
 }
 
-// ─── Full payment history table ─────────────────────────────────────────────
-function HistoryTable({ records }: { records: PaymentRecord[] }) {
+// ─── Vertical Timeline ───────────────────────────────────────────────────────
+function HistoryTimeline({ records }: { records: PaymentRecord[] }) {
   if (records.length === 0) return null;
   return (
-    <div>
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}>
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>
-          पूर्ण भुगतान इतिहास / Full Payment History
-        </p>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[700px]">
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
-              {['माह/Month', 'स्थिति/Status', 'राशि/Amount', 'UTR No.', 'खाता/Account', 'बैंक/Bank'].map((h) => (
-                <th key={h} className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap"
-                  style={{ color: 'var(--color-muted)' }}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {records.map((r, i) => (
-              <tr
-                key={i}
-                className="transition-colors animate-fade-in-up"
-                style={{
-                  borderBottom: '1px solid var(--color-hairline-soft)',
-                  animationDelay: `${i * 40}ms`,
+    <div className="px-6 py-6 pb-8">
+      {records.map((r, i) => {
+        const isSuccess = r.statusBadge === 'success';
+        const fromM = formatMonth(r.fromMonth) || r.fromMonth || '—';
+        const toM = formatMonth(r.toMonth);
+        const monthDisplay = (toM && toM !== fromM) ? `${fromM} - ${toM}` : fromM;
+        
+        return (
+          <div key={i} className="timeline-node flex gap-5 mb-8 last:mb-0 animate-fade-in-up" style={{ animationDelay: `${i * 50}ms` }}>
+            
+            {/* Timeline Icon */}
+            <div className="relative z-10 flex-shrink-0 mt-1">
+              <div 
+                className="w-12 h-12 rounded-full flex items-center justify-center border-4"
+                style={{ 
+                  background: isSuccess ? '#f0fdf4' : 'var(--color-canvas)', 
+                  borderColor: 'var(--color-canvas)',
+                  boxShadow: '0 0 0 1px var(--color-hairline)'
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-soft)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
-                {/* Month range */}
-                <td className="py-3 px-4">
-                  <div className="flex flex-col gap-0.5">
-                    {(() => {
-                      const fromM = formatMonth(r.fromMonth);
-                      const toM = formatMonth(r.toMonth);
-                      if (fromM && toM && fromM !== toM) {
-                        return (
-                          <>
-                            <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
-                            <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
-                          </>
-                        );
-                      } else {
-                        return <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>;
-                      }
-                    })()}
+                <PayStatusIcon type={r.statusBadge} className="w-5 h-5" />
+              </div>
+            </div>
+
+            {/* Passbook Entry Card */}
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl"
+              style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-hairline-soft)' }}>
+              
+              <div className="flex flex-col gap-1.5">
+                <p className="text-lg font-bold devanagari" style={{ color: 'var(--color-ink)' }}>
+                  {monthDisplay}
+                </p>
+                <p className="text-sm font-medium flex items-center gap-1.5" style={{ color: isSuccess ? '#15803d' : 'var(--color-muted)' }}>
+                  {r.status}
+                </p>
+                
+                {/* Bank Details */}
+                {(r.creditAccountNo || r.creditBank) && (
+                  <div className="flex items-center gap-2 mt-2 pt-2 text-xs" style={{ borderTop: '1px dashed var(--color-hairline)', color: 'var(--color-muted)' }}>
+                    <Landmark className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="font-mono">A/C: {r.creditAccountNo || '—'}</span>
+                    <span className="opacity-50">|</span>
+                    <span className="truncate max-w-[150px]">{r.creditBank || '—'}</span>
                   </div>
-                </td>
-                {/* Status */}
-                <td className="py-3 px-4">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center gap-2">
-                      <PayStatusIcon type={r.statusBadge} />
-                      <span className="text-sm devanagari leading-snug" style={{ color: 'var(--color-body)' }}>{r.status}</span>
-                    </div>
-                    <span className={BADGE_CLASS[r.statusBadge]}>{r.paymentType || '—'}</span>
-                  </div>
-                </td>
-                {/* Amount — fixed contrast! */}
-                <td className="py-3 px-4">
-                  <span className="text-sm font-bold font-mono" style={{ color: '#15803d' }}>
-                    {r.amount ? `₹${r.amount}` : '—'}
-                  </span>
-                </td>
-                {/* UTR */}
-                <td className="py-3 px-4">
-                  <span className="text-xs font-mono select-all" style={{ color: 'var(--color-muted)' }}>{r.utrNo || '—'}</span>
-                </td>
-                {/* Account */}
-                <td className="py-3 px-4">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-mono" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
-                    <span className="text-xs truncate max-w-[120px]" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
-                  </div>
-                </td>
-                {/* Bank */}
-                <td className="py-3 px-4">
-                  <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                )}
+              </div>
+
+              {/* Amount */}
+              <div className="flex flex-col sm:items-end justify-center">
+                {r.amount ? (
+                  <p className="text-2xl font-bold font-mono tracking-tight" style={{ color: isSuccess ? '#15803d' : 'var(--color-ink)' }}>
+                    ₹{r.amount}
+                  </p>
+                ) : (
+                  <p className="text-xl font-bold" style={{ color: 'var(--color-muted-soft)' }}>—</p>
+                )}
+                {r.utrNo && (
+                  <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-muted-soft)' }}>UTR: {r.utrNo}</p>
+                )}
+              </div>
+            </div>
+            
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -197,13 +120,13 @@ function EmptyHistory({ rawText }: { rawText?: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-3">
       <div
-        className="w-14 h-14 rounded-full flex items-center justify-center"
-        style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-hairline)' }}
+        className="w-16 h-16 rounded-full flex items-center justify-center"
+        style={{ background: 'var(--color-surface-soft)', border: '1px dashed var(--color-hairline)' }}
       >
-        <Banknote className="w-6 h-6" style={{ color: 'var(--color-muted)' }} />
+        <Banknote className="w-6 h-6 opacity-40" />
       </div>
-      <p className="text-sm devanagari" style={{ color: 'var(--color-muted)' }}>कोई भुगतान इतिहास उपलब्ध नहीं</p>
-      <p className="text-xs" style={{ color: 'var(--color-muted-soft)' }}>No payment history for this period</p>
+      <p className="text-lg font-bold devanagari" style={{ color: 'var(--color-muted)' }}>कोई भुगतान इतिहास नहीं</p>
+      <p className="text-sm" style={{ color: 'var(--color-muted-soft)' }}>No payment history for this period</p>
       {rawText && (
         <p className="text-xs max-w-sm text-center px-4 mt-2 devanagari leading-relaxed" style={{ color: 'var(--color-muted)' }}>
           {rawText}
@@ -219,54 +142,40 @@ export default function PaymentHistory({ data, financialYear }: Props) {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden animate-fade-in-up"
-      style={{
-        background: 'var(--color-canvas)',
-        border: '1px solid var(--color-hairline)',
-        boxShadow: 'var(--shadow-card)',
-        animationDelay: '200ms',
-      }}
+      className="passbook-cover mt-8 animate-fade-in-up"
+      style={{ animationDelay: '200ms' }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-6 py-4"
-        style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}
+        className="flex items-center justify-between px-6 py-5"
+        style={{ background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-hairline)' }}
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}
+            className="w-12 h-12 rounded-2xl flex items-center justify-center"
+            style={{ background: 'var(--color-feature-gold)', color: 'var(--color-feature-gold-on)' }}
           >
-            <Banknote className="w-4 h-4" style={{ color: '#16a34a' }} />
+            <Banknote className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold" style={{ color: 'var(--color-ink)' }}>भुगतान इतिहास</h3>
-            <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Payment History</p>
+            <h3 className="text-lg md:text-xl font-bold font-display tracking-wide" style={{ color: 'var(--color-ink)' }}>भुगतान इतिहास</h3>
+            <p className="text-xs uppercase tracking-widest font-semibold mt-0.5" style={{ color: 'var(--color-muted)' }}>Payment Timeline</p>
           </div>
         </div>
-        <span className="badge-info">{financialYear}</span>
+        
+        <div className="flex flex-col items-end">
+          <span className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--color-muted)' }}>वर्ष / Year</span>
+          <span className="px-3 py-1 rounded-lg text-sm font-bold font-mono" style={{ background: 'var(--color-canvas)', border: '1px solid var(--color-hairline)' }}>
+            {financialYear}
+          </span>
+        </div>
       </div>
 
-      {/* Recent summary pills */}
-      {hasMonths && (
-        <SummaryStrip months={data.paymentMonths} lastUpdate={data.paymentStatusLastUpdate} />
-      )}
-
-      {/* Full history table or empty state */}
+      {/* Full history timeline or empty state */}
       {hasHistory ? (
-        <HistoryTable records={data.paymentHistory} />
+        <HistoryTimeline records={data.paymentHistory} />
       ) : (
-        !hasMonths && <EmptyHistory rawText={data.paymentStatusRaw ?? ''} />
-      )}
-
-      {/* If we have summary but no history table, show a note */}
-      {hasMonths && !hasHistory && (
-        <div className="px-6 py-4" style={{ borderTop: '1px solid var(--color-hairline-soft)' }}>
-          <p className="text-xs devanagari leading-relaxed" style={{ color: 'var(--color-muted)' }}>
-            <span className="font-medium">पोर्टल से मूल जानकारी: </span>
-            {data.paymentStatusRaw ?? ''}
-          </p>
-        </div>
+        <EmptyHistory rawText={data.paymentStatusRaw ?? ''} />
       )}
     </div>
   );

@@ -14,7 +14,6 @@ import PaymentHistory from '@/components/PaymentHistory';
 import LocationCard from '@/components/LocationCard';
 import type { PensionData, SearchFormValues } from '@/lib/types';
 import { searchPensionAction } from '@/app/actions';
-import QuickSummaryCard from '@/components/QuickSummaryCard';
 
 // ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
@@ -48,7 +47,7 @@ function HeroSection() {
         {/* Brand headline */}
         <div className="text-center mb-7">
           <h1 className="font-display text-5xl md:text-7xl font-semibold tracking-tight leading-[1.08] pt-1 pb-1 overflow-visible"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", letterSpacing: '-0.02em' }}>
+            style={{ fontFamily: "var(--font-display)", letterSpacing: '-0.02em' }}>
             <span className="gradient-text-serif">मेरा</span>
             <span style={{ color: 'var(--color-ink)' }}> Pension</span>
           </h1>
@@ -181,7 +180,7 @@ function HowItWorks() {
           Step by Step
         </p>
         <h2 className="font-display text-3xl md:text-4xl font-semibold"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
+          style={{ fontFamily: "var(--font-display)", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
           कैसे इस्तेमाल करें
         </h2>
         <p className="mt-2 text-base" style={{ color: 'var(--color-muted)' }}>How To Use MeraPension</p>
@@ -203,7 +202,7 @@ function HowItWorks() {
             <span
               className="block text-4xl font-semibold mb-4 leading-none"
               style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
+                fontFamily: "var(--font-display)",
                 color: 'var(--color-primary)',
                 opacity: 0.85,
               }}
@@ -279,7 +278,7 @@ function TrustSection() {
           Open Source · Free · No Data Stored
         </span>
         <h2 className="font-display text-3xl md:text-4xl font-semibold devanagari"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
+          style={{ fontFamily: "var(--font-display)", color: 'var(--color-ink)', letterSpacing: '-0.02em' }}>
           आप भरोसे के साथ इस्तेमाल करें
         </h2>
         <p className="mt-2 text-base" style={{ color: 'var(--color-muted)' }}>
@@ -387,7 +386,7 @@ function Footer() {
           {/* Brand */}
           <div>
             <p className="font-semibold text-lg" style={{ color: 'var(--color-on-dark)' }}>
-              <span className="gradient-text-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>MeraPension</span>
+              <span className="gradient-text-serif" style={{ fontFamily: "var(--font-display)" }}>MeraPension</span>
               <span style={{ color: 'var(--color-on-dark-soft)' }}> — Bihar Pension Tracker</span>
             </p>
             <p className="text-xs mt-1.5" style={{ color: 'var(--color-on-dark-soft)' }}>
@@ -532,8 +531,7 @@ export default function HomePage() {
                 <ResultActions onNewSearch={handleNewSearch} />
               </div>
 
-              {/* Quick summary */}
-              <QuickSummaryCard data={pensionData} />
+
 
               {/* Beneficiary identity */}
               <BeneficiaryCard data={pensionData} />

@@ -9,51 +9,57 @@
     /* Fonts */
     --font-inter: 'Inter', sans-serif;
     --font-devanagari: 'Noto Sans Devanagari', sans-serif;
-    --font-display: 'Playfair Display', Georgia, serif;
+    --font-display: 'DM Serif Display', Georgia, serif;
 
-    /* Brand colors */
-    --color-primary:         #f97316;   /* saffron-orange — every primary CTA */
-    --color-primary-active:  #ea6c05;
-    --color-primary-light:   #fff7ed;
-    --color-primary-ring:    rgba(249, 115, 22, 0.3);
+    /* Brand colors (Civic Saffron) */
+    --color-primary:         #e8720c;   /* Saffron - civic warmth */
+    --color-primary-active:  #c25c06;
+    --color-primary-light:   #fef3e2;
+    --color-primary-ring:    rgba(232, 114, 12, 0.3);
 
     /* Canvas surfaces — warm cream progression */
-    --color-canvas:          #faf7f2;   /* warm cream, the brand differentiator */
-    --color-surface-soft:    #f5f0e6;   /* slightly darker cream for hover bg */
-    --color-surface-card:    #ede8de;   /* feature cards */
-    --color-surface-strong:  #e4ddd0;   /* emphasized sections */
-    --color-surface-dark:    #1c1a16;   /* dark sections / footer */
-    --color-surface-dark-el: #252219;   /* elevated cards inside dark */
+    --color-canvas:          #fdf8f0;   /* warmer cream canvas */
+    --color-surface-soft:    #f5efe3;   /* soft cream */
+    --color-surface-card:    #ede3cd;   /* feature cards base */
+    --color-surface-strong:  #e4ddd0;   /* emphasized */
+    --color-surface-dark:    #1a1612;   /* deep ink footer */
+    --color-surface-dark-el: #24201b;
 
     /* Text */
-    --color-ink:             #1a1310;   /* warm deep black */
-    --color-body:            #3d3830;   /* running text */
-    --color-muted:           #6b6560;   /* secondary labels */
-    --color-muted-soft:      #9c948c;   /* captions / fine print */
-    --color-on-dark:         #f5f0e6;   /* text on dark surfaces */
-    --color-on-dark-soft:    #a09890;   /* secondary on dark */
+    --color-ink:             #1a1612;   /* warm deep black */
+    --color-body:            #38322c;   /* running text */
+    --color-muted:           #7a7168;   /* secondary labels */
+    --color-muted-soft:      #9c948c;   /* captions */
+    --color-on-dark:         #f5efe3;
+    --color-on-dark-soft:    #a39b92;
 
     /* Borders */
-    --color-hairline:        #ddd6ca;   /* default 1px border */
-    --color-hairline-soft:   #e8e3da;   /* soft dividers */
+    --color-hairline:        #e0d7c8;   /* default 1px border */
+    --color-hairline-soft:   #ebe4d8;
 
-    /* Scheme colors */
-    --color-emerald:         #059669;
-    --color-amber:           #d97706;
-    --color-red:             #dc2626;
-    --color-violet:          #7c3aed;
-    --color-sky:             #0284c7;
+    /* Feature Card Colors (Clay-inspired status flow) */
+    --color-feature-teal:    #1a6b5a;
+    --color-feature-teal-on: #ffffff;
+    --color-feature-coral:   #d94f3d;
+    --color-feature-coral-on: #ffffff;
+    --color-feature-gold:    #c49520;
+    --color-feature-gold-on: #1a1612;
 
     /* Elevation */
-    --shadow-card:    0 1px 3px rgba(26, 19, 16, 0.06), 0 4px 12px rgba(26, 19, 16, 0.04);
-    --shadow-hover:   0 4px 16px rgba(26, 19, 16, 0.10), 0 1px 4px rgba(26, 19, 16, 0.06);
-    --shadow-primary: 0 4px 20px rgba(249, 115, 22, 0.30);
+    --shadow-card:    0 1px 3px rgba(26, 22, 18, 0.04), 0 6px 14px rgba(26, 22, 18, 0.03);
+    --shadow-hover:   0 6px 20px rgba(26, 22, 18, 0.08), 0 2px 5px rgba(26, 22, 18, 0.04);
+    --shadow-primary: 0 4px 20px rgba(232, 114, 12, 0.25);
+    
+    /* Soft colored shadows */
+    --shadow-teal:    0 4px 16px rgba(26, 107, 90, 0.15);
+    --shadow-coral:   0 4px 16px rgba(217, 79, 61, 0.15);
+    --shadow-gold:    0 4px 16px rgba(196, 149, 32, 0.15);
 
     /* Radius */
     --radius-sm:   8px;
     --radius-md:   12px;
     --radius-lg:   16px;
-    --radius-xl:   24px;
+    --radius-xl:   24px;   /* Clay generous radius */
     --radius-full: 9999px;
   }
 
@@ -81,7 +87,7 @@
   /* Display / editorial headlines */
   .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   /* Hindi/Devanagari text */
@@ -120,25 +126,63 @@
     background: var(--color-surface-dark);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: var(--radius-lg);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   }
 
-  /* Legacy glass — keep for compat */
-  .glass {
+  /* ── Passbook specific layouts ─────────────────────────────────────────── */
+  .passbook-cover {
     background: var(--color-canvas);
     border: 1px solid var(--color-hairline);
     box-shadow: var(--shadow-card);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
   }
-  .glass-light {
-    background: rgba(250, 247, 242, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--color-hairline);
+  
+  .timeline-node {
+    position: relative;
+  }
+  .timeline-node::before {
+    content: '';
+    position: absolute;
+    left: 23px; /* centers on the 48px width date column */
+    top: 48px;
+    bottom: -16px;
+    width: 2px;
+    background: var(--color-hairline-soft);
+    z-index: 0;
+  }
+  .timeline-node:last-child::before {
+    display: none;
+  }
+
+  /* ── Clay-style Feature Cards ──────────────────────────────────────────── */
+  .feature-card {
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-2px);
+  }
+  .feature-teal {
+    background: var(--color-feature-teal);
+    color: var(--color-feature-teal-on);
+    box-shadow: var(--shadow-teal);
+  }
+  .feature-coral {
+    background: var(--color-feature-coral);
+    color: var(--color-feature-coral-on);
+    box-shadow: var(--shadow-coral);
+  }
+  .feature-gold {
+    background: var(--color-feature-gold);
+    color: var(--color-feature-gold-on);
+    box-shadow: var(--shadow-gold);
   }
 
   /* ── Typography ────────────────────────────────────────────────────────── */
   .gradient-text {
-    background: linear-gradient(135deg, #f97316 0%, #fb923c 60%, #fbbf24 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, #fb923c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
