@@ -99,7 +99,6 @@ function SummaryStrip({ months, lastUpdate }: { months: PaymentMonth[]; lastUpda
   );
 }
 
-// ─── Full payment history table ─────────────────────────────────────────────
 function HistoryTable({ records }: { records: PaymentRecord[] }) {
   if (records.length === 0) return null;
   return (
@@ -109,7 +108,79 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
           पूर्ण भुगतान इतिहास / Full Payment History
         </p>
       </div>
-      <div className="overflow-x-auto">
+      
+      {/* ─── Mobile Card View (hidden on desktop) ─── */}
+      <div className="block md:hidden divide-y" style={{ borderColor: 'var(--color-hairline-soft)' }}>
+        {records.map((r, i) => {
+          const fromM = formatMonth(r.fromMonth);
+          const toM = formatMonth(r.toMonth);
+          const isRange = fromM && toM && fromM !== toM;
+          return (
+            <div key={i} className="p-5 flex flex-col gap-4 animate-fade-in-up" style={{ animationDelay: `${i * 30}ms` }}>
+              {/* Header: Month & Amount */}
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>माह / Month</span>
+                  {isRange ? (
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-sm font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
+                      <span className="text-sm font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>
+                  )}
+                </div>
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>राशि / Amount</span>
+                  <span className="text-base font-bold font-mono" style={{ color: '#15803d' }}>
+                    {r.amount ? `₹${r.amount}` : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Body: Status Card */}
+              <div className="flex flex-col gap-2.5 p-3.5 rounded-xl border" style={{ background: 'rgba(0,0,0,0.015)', borderColor: 'var(--color-hairline)' }}>
+                <div className="flex items-center gap-2">
+                  <PayStatusIcon type={r.statusBadge} />
+                  <span className="text-sm font-semibold devanagari leading-snug" style={{ color: 'var(--color-body)' }}>{r.status}</span>
+                </div>
+                <span className={`${BADGE_CLASS[r.statusBadge]} w-fit font-bold`}>{r.paymentType || '—'}</span>
+              </div>
+
+              {/* Footer: Details Grid */}
+              <div className="grid grid-cols-2 gap-4 mt-1 bg-white p-3 rounded-xl border border-dashed" style={{ borderColor: 'var(--color-hairline)' }}>
+                {/* UTR & Date */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>UTR No.</span>
+                    <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}</span>
+                  </div>
+                  {r.paymentDate && (
+                    <div className="flex flex-col">
+                      <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>Date</span>
+                      <span className="text-xs font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Bank & Account */}
+                <div className="flex flex-col gap-1.5 border-l pl-4" style={{ borderColor: 'var(--color-hairline-soft)' }}>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>A/C No.</span>
+                    <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>Bank</span>
+                    <span className="text-[10px] font-medium uppercase truncate pr-2" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ─── Desktop Table View (hidden on mobile) ─── */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
@@ -157,12 +228,12 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center gap-2">
                       <PayStatusIcon type={r.statusBadge} />
-                      <span className="text-sm devanagari leading-snug" style={{ color: 'var(--color-body)' }}>{r.status}</span>
+                      <span className="text-sm devanagari leading-snug font-medium" style={{ color: 'var(--color-body)' }}>{r.status}</span>
                     </div>
                     <span className={BADGE_CLASS[r.statusBadge]}>{r.paymentType || '—'}</span>
                   </div>
                 </td>
-                {/* Amount — fixed contrast! */}
+                {/* Amount */}
                 <td className="py-3 px-4">
                   <span className="text-sm font-bold font-mono" style={{ color: '#15803d' }}>
                     {r.amount ? `₹${r.amount}` : '—'}
@@ -177,7 +248,7 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
                     {r.paymentDate && (
                       <div className="flex flex-col gap-0.5 mt-0.5">
                         <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--color-muted-soft)' }}>भुगतान तिथि / Date</span>
-                        <span className="text-xs font-mono" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                        <span className="text-xs font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
                       </div>
                     )}
                   </div>
@@ -185,13 +256,13 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
                 {/* Account */}
                 <td className="py-3 px-4">
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-mono" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
-                    <span className="text-xs truncate max-w-[120px]" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
+                    <span className="text-xs font-mono font-semibold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
+                    <span className="text-xs truncate max-w-[120px] font-medium" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
                   </div>
                 </td>
                 {/* Bank */}
                 <td className="py-3 px-4">
-                  <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
+                  <span className="text-xs font-medium" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
                 </td>
               </tr>
             ))}
