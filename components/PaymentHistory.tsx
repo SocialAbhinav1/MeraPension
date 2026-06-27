@@ -106,8 +106,8 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
 
   return (
     <div>
-      <div className="px-6 py-3" style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}>
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>
+      <div className="px-6 py-4" style={{ borderBottom: '1px solid var(--color-hairline-soft)' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>
           पूर्ण भुगतान इतिहास / Full Payment History
         </p>
       </div>
@@ -120,45 +120,45 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
           const isRange = fromM && toM && fromM !== toM;
           
           return (
-            <div key={i} className="p-4 flex flex-col gap-3 animate-fade-in-up" style={{ animationDelay: `${i * 30}ms` }}>
+            <div key={i} className="p-5 flex flex-col gap-3.5 animate-fade-in-up" style={{ animationDelay: `${i * 30}ms` }}>
               {/* Header: Month & Amount */}
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col gap-0.5">
+              <div className="flex justify-between items-center gap-2">
+                <div className="flex flex-col gap-0.5 min-w-0">
                   <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>माह / Month</span>
                   {isRange ? (
-                    <span className="text-sm font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से {toM} तक</span>
+                    <span className="text-[13px] sm:text-sm font-bold devanagari leading-snug truncate" style={{ color: 'var(--color-ink)' }}>{fromM} से {toM} तक</span>
                   ) : (
-                    <span className="text-sm font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>
+                    <span className="text-[13px] sm:text-sm font-bold devanagari leading-snug truncate" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>
                   )}
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] uppercase tracking-widest font-bold block" style={{ color: 'var(--color-muted-soft)' }}>राशि / Amount</span>
-                  <span className="text-base font-bold font-mono" style={{ color: '#15803d' }}>
+                <div className="text-right flex-shrink-0">
+                  <span className="text-[10px] uppercase tracking-widest font-bold block mb-0.5" style={{ color: 'var(--color-muted-soft)' }}>राशि / Amount</span>
+                  <span className="text-[15px] sm:text-base font-bold font-mono" style={{ color: '#15803d' }}>
                     {r.amount ? `₹${r.amount}` : '—'}
                   </span>
                 </div>
               </div>
 
               {/* Body: Clean Key-Value List */}
-              <div className="flex flex-col gap-2.5 pt-3 border-t border-dashed" style={{ borderColor: 'var(--color-hairline)' }}>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>UTR No.</span>
-                  <span className="font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}</span>
+              <div className="flex flex-col gap-3 pt-3.5 border-t border-dashed" style={{ borderColor: 'var(--color-hairline)' }}>
+                <div className="flex justify-between items-center text-xs gap-4">
+                  <span className="font-bold uppercase tracking-widest flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }}>UTR No.</span>
+                  <span className="font-mono font-bold select-all text-right break-all" style={{ color: 'var(--color-body)' }}>{r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}</span>
                 </div>
                 {r.paymentDate && (
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>Date</span>
-                    <span className="font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                  <div className="flex justify-between items-center text-xs gap-4">
+                    <span className="font-bold uppercase tracking-widest flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }}>Date</span>
+                    <span className="font-mono font-bold text-right" style={{ color: '#059669' }}>{r.paymentDate}</span>
                   </div>
                 )}
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>A/C No.</span>
-                  <span className="font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
+                <div className="flex justify-between items-center text-xs gap-4">
+                  <span className="font-bold uppercase tracking-widest flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }}>A/C No.</span>
+                  <span className="font-mono font-bold text-right" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
                 </div>
                 {hasAnyBank && (
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold uppercase tracking-wider" style={{ color: 'var(--color-muted-soft)' }}>Bank</span>
-                    <span className="font-medium truncate max-w-[150px] text-right" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
+                  <div className="flex justify-between items-center text-xs gap-4">
+                    <span className="font-bold uppercase tracking-widest flex-shrink-0" style={{ color: 'var(--color-muted-soft)' }}>Bank</span>
+                    <span className="font-medium text-right line-clamp-2" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
                   </div>
                 )}
               </div>
@@ -172,12 +172,12 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
         <table className="w-full min-w-[700px]">
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-hairline)', background: 'var(--color-surface-soft)' }}>
-              <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>माह/Month</th>
-              <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>राशि/Amount</th>
-              <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>UTR / भुगतान तिथि</th>
-              <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>खाता/Account</th>
+              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>माह/Month</th>
+              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>राशि/Amount</th>
+              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>UTR / भुगतान तिथि</th>
+              <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>खाता/Account</th>
               {hasAnyBank && (
-                <th className="py-3 px-4 text-xs font-semibold uppercase tracking-wider text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>बैंक/Bank</th>
+                <th className="py-3.5 px-5 text-[11px] font-bold uppercase tracking-widest text-left whitespace-nowrap" style={{ color: 'var(--color-muted)' }}>बैंक/Bank</th>
               )}
             </tr>
           </thead>
@@ -185,16 +185,14 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
             {records.map((r, i) => (
               <tr
                 key={i}
-                className="transition-colors animate-fade-in-up"
+                className="transition-colors animate-fade-in-up hover:bg-slate-50/50"
                 style={{
                   borderBottom: '1px solid var(--color-hairline-soft)',
-                  animationDelay: `${i * 40}ms`,
+                  animationDelay: `${i * 30}ms`,
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-soft)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
               >
                 {/* Month range */}
-                <td className="py-3 px-4">
+                <td className="py-4 px-5">
                   <div className="flex flex-col gap-0.5">
                     {(() => {
                       const fromM = formatMonth(r.fromMonth);
@@ -202,51 +200,51 @@ function HistoryTable({ records }: { records: PaymentRecord[] }) {
                       if (fromM && toM && fromM !== toM) {
                         return (
                           <>
-                            <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
-                            <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
+                            <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM} से</span>
+                            <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{toM} तक</span>
                           </>
                         );
                       } else {
-                        return <span className="text-sm font-semibold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>;
+                        return <span className="text-[13px] font-bold devanagari" style={{ color: 'var(--color-ink)' }}>{fromM || r.fromMonth || '—'}</span>;
                       }
                     })()}
                   </div>
                 </td>
                 
                 {/* Amount */}
-                <td className="py-3 px-4">
-                  <span className="text-sm font-bold font-mono" style={{ color: '#15803d' }}>
+                <td className="py-4 px-5">
+                  <span className="text-[14px] font-bold font-mono" style={{ color: '#15803d' }}>
                     {r.amount ? `₹${r.amount}` : '—'}
                   </span>
                 </td>
                 
                 {/* UTR & Payment Date */}
-                <td className="py-3 px-4">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-mono select-all font-semibold" style={{ color: 'var(--color-body)' }}>
+                <td className="py-4 px-5">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[13px] font-mono select-all font-bold" style={{ color: 'var(--color-body)' }}>
                       {r.utrNo && r.utrNo !== '—' ? r.utrNo : '—'}
                     </span>
                     {r.paymentDate && (
-                      <div className="flex flex-col gap-0.5 mt-0.5">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'var(--color-muted-soft)' }}>भुगतान तिथि / Date</span>
-                        <span className="text-xs font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--color-muted-soft)' }}>भुगतान तिथि / Date</span>
+                        <span className="text-[12px] font-mono font-bold" style={{ color: '#059669' }}>{r.paymentDate}</span>
                       </div>
                     )}
                   </div>
                 </td>
                 
                 {/* Account */}
-                <td className="py-3 px-4">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-mono font-semibold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
-                    <span className="text-xs truncate max-w-[120px] font-medium" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
+                <td className="py-4 px-5">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[13px] font-mono font-bold" style={{ color: 'var(--color-body)' }}>{r.creditAccountNo || '—'}</span>
+                    <span className="text-[12px] truncate max-w-[140px] font-medium" style={{ color: 'var(--color-muted)' }}>{r.accountHolderName || '—'}</span>
                   </div>
                 </td>
                 
                 {/* Bank */}
                 {hasAnyBank && (
-                  <td className="py-3 px-4">
-                    <span className="text-xs font-medium" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
+                  <td className="py-4 px-5">
+                    <span className="text-[13px] font-medium leading-snug" style={{ color: 'var(--color-muted)' }}>{r.creditBank || '—'}</span>
                   </td>
                 )}
               </tr>
